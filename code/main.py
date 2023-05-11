@@ -34,5 +34,5 @@ class Gabor:
 
 if __name__ == '__main__':
     gabor = Gabor()
-    gabor.read_wav('input/file_example_WAV_1MG.wav')
+    gabor.read_wav('../input/1.wav')
     gabor.plot_sound()
