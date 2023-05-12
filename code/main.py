@@ -69,7 +69,7 @@ class Gabor:
         fourier_data_shift = fftshift(fourier_data)
 
         # plotting spectral content of sound wave
-        plt.xlim([0, 5000])
+        plt.xlim([0, 600])
         plt.xlabel("Frequency (Hz)")
         plt.ylabel("Amplitude")
         plt.plot(self.freq_domain, fourier_data_shift)
@@ -106,24 +106,14 @@ class Gabor:
             plt.plot(self.freq_domain, fourier_data_shift)
             plt.pause(1)
 
-    # Manual implementation of the fast fourier transform
-    def own_fft(self, data):
-        x = np.asarray(data, dtype=float)
-        n = x.shape[0]
-
-        if n <= 32:
-            return self.DFT_slow(x)
-        else:
-            even = self.own_fft(x[0::2])
-            odd = self.own_fft(x[1::2])
-
-            T = [np.exp(-2j * np.pi * k / n) * odd[k] for k in range(n // 2)]
-            return [even[k] + T[k] for k in range(n // 2)] + \
-                   [even[k] - T[k] for k in range(n // 2)]
-
-        return [np.exp(-2j * np.pi * k / n) * sum([data[n] * np.exp(2j * np.pi * k * n / n) for i in range(n)]) for k in range(n)]
-
-        sum = [fhat(n) * np.exp(-2j * np.pi * n * t) for t in range(n)]
+    def gabor_transform3(self):
+        plt.specgram(self.data, NFFT=128, Fs=10*self.samplerate, noverlap=120, cmap='jet_r')
+        plt.ylim([0, 17000])
+        plt.xlim([0, 2])
+        plt.colorbar()
+        plt.xlabel("Time (seconds)")
+        plt.ylabel("Frequency (Hz)")
+        plt.show()
 
     def DFT_slow(self, data):
         """Compute the discrete Fourier Transform of the 1D array x"""
@@ -171,9 +161,10 @@ class Gabor:
 if __name__ == '__main__':
     gabor = Gabor()
     gabor.read_wav('../input/hbd.wav')
-    gabor.fourier_transform()
-    gabor.read_wav('../input/hbd.wav')
-    gabor.fourier_transform2()
+    # gabor.fourier_transform2()
+    # gabor.read_wav('../input/hbd.wav')
+    # gabor.fourier_transform2()
+    gabor.gabor_transform3()
 
 
     # Interesting links
