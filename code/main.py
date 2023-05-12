@@ -78,7 +78,7 @@ class Gabor:
     def fourier_transform2(self):
         # fourier transform
         fourier_data = abs(self.FFT(self.data))
-        fourier_data_shift = fftshift(fourier_data)
+        fourier_data_shift = self.fftshift(fourier_data)
 
         # plotting spectral content of sound wave
         plt.xlim([0, 5000])
@@ -162,6 +162,10 @@ class Gabor:
         x = self.preprocessFFT(data)
         processed = self.recursiveFFT(x)
         return processed[:n_original]
+
+    def fftshift(self, fourier_data):
+        n = len(fourier_data)
+        return np.concatenate((fourier_data[n // 2:], fourier_data[:n // 2]))
 
 
 if __name__ == '__main__':
