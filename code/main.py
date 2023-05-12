@@ -1,9 +1,12 @@
+import math
+
 from scipy import signal
 from scipy.io import wavfile
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.fftpack import fft, fftshift
 from IPython.display import clear_output
+import stft
 
 
 class Gabor:
@@ -66,7 +69,19 @@ class Gabor:
         fourier_data_shift = fftshift(fourier_data)
 
         # plotting spectral content of sound wave
-        plt.xlim([-5000, 5000])
+        plt.xlim([0, 5000])
+        plt.xlabel("Frequency (Hz)")
+        plt.ylabel("Amplitude")
+        plt.plot(self.freq_domain, fourier_data_shift)
+        plt.show()
+
+    def fourier_transform2(self):
+        # fourier transform
+        fourier_data = abs(self.FFT(self.data))
+        fourier_data_shift = fftshift(fourier_data)
+
+        # plotting spectral content of sound wave
+        plt.xlim([0, 5000])
         plt.xlabel("Frequency (Hz)")
         plt.ylabel("Amplitude")
         plt.plot(self.freq_domain, fourier_data_shift)
@@ -91,9 +106,74 @@ class Gabor:
             plt.plot(self.freq_domain, fourier_data_shift)
             plt.pause(1)
 
+    # Manual implementation of the fast fourier transform
+    def own_fft(self, data):
+        x = np.asarray(data, dtype=float)
+        n = x.shape[0]
+
+        if n <= 32:
+            return self.DFT_slow(x)
+        else:
+            even = self.own_fft(x[0::2])
+            odd = self.own_fft(x[1::2])
+
+            T = [np.exp(-2j * np.pi * k / n) * odd[k] for k in range(n // 2)]
+            return [even[k] + T[k] for k in range(n // 2)] + \
+                   [even[k] - T[k] for k in range(n // 2)]
+
+        return [np.exp(-2j * np.pi * k / n) * sum([data[n] * np.exp(2j * np.pi * k * n / n) for i in range(n)]) for k in range(n)]
+
+        sum = [fhat(n) * np.exp(-2j * np.pi * n * t) for t in range(n)]
+
+    def DFT_slow(self, data):
+        """Compute the discrete Fourier Transform of the 1D array x"""
+        x = np.asarray(data, dtype=float)
+        N = x.shape[0]
+        n = np.arange(N)
+        k = n.reshape((N, 1))
+        M = np.exp(-2j * np.pi * k * n / N)
+        return np.dot(M, x)
+
+    def preprocessFFT(self, data):
+        logarithmus = int(math.log(len(data), 2))
+        next_power_of_two = 2 ** (logarithmus + 1)
+
+        if len(data) < next_power_of_two:
+            data = np.append(data, np.zeros(next_power_of_two-len(data)))
+
+        return data
+
+    def recursiveFFT(self, data):
+        x = np.asarray(data, dtype=float)
+        N = x.shape[0]
+
+        if N <= 32:  # this cutoff should be optimized
+            return self.DFT_slow(x)
+        else:
+            X_even = self.recursiveFFT(x[::2])
+            X_odd = self.recursiveFFT(x[1::2])
+            factor = np.exp(-2j * np.pi * np.arange(N) / N)
+            return np.concatenate([X_even + factor[:N // 2] * X_odd,
+                                   X_even + factor[N // 2:] * X_odd])
+
+    def FFT(self, data):
+        """A recursive implementation of the 1D Cooley-Tukey FFT"""
+        n_original = len(data)
+        x = self.preprocessFFT(data)
+        processed = self.recursiveFFT(x)
+        return processed[:n_original]
+
 
 if __name__ == '__main__':
     gabor = Gabor()
-    gabor.read_wav('../input/1.wav')
+    gabor.read_wav('../input/hbd.wav')
     gabor.fourier_transform()
-    gabor.gabor_transform2()
+    gabor.read_wav('../input/hbd.wav')
+    gabor.fourier_transform2()
+
+
+    # Interesting links
+    # https://github.com/libAudioFlux/audioFlux
+    # https://github.com/faroit/awesome-python-scientific-audio/blob/master/README.md
+    # https://www.tutorialspoint.com/scipy/scipy_fftpack.htm
+    # https://docs.scipy.org/doc/scipy/reference/fft.html
