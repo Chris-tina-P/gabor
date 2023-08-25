@@ -40,10 +40,11 @@ class Gabor:
 
     # This method plots the loaded sound file
     def plot_sound(self):
-        # plot sound file
-        plt.plot(self.data)
-        plt.title("Sound file")
-        plt.xlabel("Time")
+        # define time domain
+        time = np.linspace(0, self.song_length_seconds, self.data_size)
+        plt.plot(time, self.data)
+        plt.legend()
+        plt.xlabel("Time [s]")
         plt.ylabel("Amplitude")
         plt.show()
 
@@ -69,7 +70,7 @@ class Gabor:
         fourier_data_shift = fftshift(fourier_data)
 
         # plotting spectral content of sound wave
-        plt.xlim([0, 600])
+        plt.xlim([0, 1000])
         plt.xlabel("Frequency (Hz)")
         plt.ylabel("Amplitude")
         plt.plot(self.freq_domain, fourier_data_shift)
@@ -93,7 +94,7 @@ class Gabor:
 
         for i in [2.2, 4.25, 6, 8, 10, 11.8]:
             clear_output(wait=True)
-            plt.xlim([0, 600])
+            plt.xlim([0, 1000])
             gaussian = 11000 * np.exp(-2 * np.power(time_domain - i, 2))
 
             gaussian_filtered = self.data * gaussian
