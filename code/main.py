@@ -8,6 +8,9 @@ from scipy.fftpack import fft, fftshift
 from IPython.display import clear_output
 import stft
 
+x_lim = 2
+y_lim = 500
+
 
 class Gabor:
 
@@ -92,7 +95,7 @@ class Gabor:
         time_domain = np.linspace(0, self.song_length_seconds, self.data_size)
         results = []
 
-        for i in [2.2, 4.25, 6, 8, 10, 11.8]:
+        for i in range(0, 8):
             clear_output(wait=True)
             plt.xlim([0, 1000])
             gaussian = 11000 * np.exp(-2 * np.power(time_domain - i, 2))
@@ -105,12 +108,13 @@ class Gabor:
             results.append(fourier_data_shift)
 
             plt.plot(self.freq_domain, fourier_data_shift)
-            plt.pause(1)
+            plt.pause(0.5)
 
     def gabor_transform3(self):
-        plt.specgram(self.data, NFFT=128, Fs=10*self.samplerate, noverlap=120, cmap='jet_r')
-        plt.ylim([0, 17000])
-        plt.xlim([0, 2])
+        nfft = 10000
+        plt.specgram(self.data, NFFT=nfft, Fs=self.samplerate, noverlap=500, cmap='jet_r')
+        plt.ylim([0, y_lim])
+        plt.xlim([0, x_lim])
         plt.colorbar()
         plt.xlabel("Time (seconds)")
         plt.ylabel("Frequency (Hz)")
@@ -161,11 +165,12 @@ class Gabor:
 
 if __name__ == '__main__':
     gabor = Gabor()
-    gabor.read_wav('../input/hbd.wav')
-    # gabor.fourier_transform2()
+    gabor.read_wav('../input/Sin_A_2sec.wav')
+    gabor.fourier_transform2()
     # gabor.read_wav('../input/hbd.wav')
-    # gabor.fourier_transform2()
+    gabor.plot_sound()
     gabor.gabor_transform3()
+    # gabor.gabor_transform2()
 
 
     # Interesting links
