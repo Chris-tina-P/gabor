@@ -7,10 +7,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.fftpack import fft, fftshift
 from IPython.display import clear_output
-import stft
-
-x_lim = 25
-y_lim = 350
 
 
 class Gabor:
@@ -94,11 +90,20 @@ class Gabor:
         fourier_data = abs(fft(self.data))
         fourier_data_shift = fftshift(fourier_data)
 
-        # plotting spectral content of sound wave
-        plt.xlim([0, 1000])
+        self.plot_fourier(fourier_data_shift)
+
+    def plot_fourier(self, fourier_data, x_lim: int = 1000) -> None:
+        """
+        This method plots the Fourier transform of the transformed data.
+        :param x_lim: The frequency limit of the plot (x limit)
+        :param fourier_data: The transformed data to plot.
+        :return: None
+        """
+
+        plt.xlim([0, x_lim])
         plt.xlabel("Frequency (Hz)")
         plt.ylabel("Amplitude")
-        plt.plot(self.freq_domain, fourier_data_shift)
+        plt.plot(self.freq_domain, fourier_data)
         plt.show()
 
     def own_fourier_transform(self) -> None:
@@ -112,11 +117,7 @@ class Gabor:
         fourier_data_shift = self.fft_shift(fourier_data)
 
         # plotting spectral content of sound wave
-        plt.xlim([0, 1000])
-        plt.xlabel("Frequency (Hz)")
-        plt.ylabel("Amplitude")
-        plt.plot(self.freq_domain, fourier_data_shift)
-        plt.show()
+        self.plot_fourier(fourier_data_shift)
 
     def own_gabor_transform(self) -> None:
         """
@@ -142,13 +143,19 @@ class Gabor:
             plt.plot(self.freq_domain, fourier_data_shift)
             plt.pause(0.5)
 
-    def gabor_transform(self) -> None:
+    def gabor_transform(self, nfft: int = 10000, noverlap: int = 500, x_lim: int = 0, y_lim: int = 1000) -> None:
         """
-        This method computes the Gabor transform of the loaded sound file and plots spectrogram.
+        This method plots the spectrogram of the loaded sound file.
+        :param nfft: The number of points for the fft.
+        :param noverlap: The number of points for the overlap.
+        :param x_lim: The time limit (x limit) of the plot. If smaller or equal 0, the whole song is plotted.
+        :param y_lim: The frequency limit (y limit) of the plot.
         :return: None
         """
-        nfft = 10000
-        plt.specgram(self.data, NFFT=nfft, Fs=self.samplerate, noverlap=500, cmap='jet_r')
+        if x_lim <= 0:
+            x_lim = self.song_length_seconds
+
+        plt.specgram(self.data, NFFT=nfft, Fs=self.samplerate, noverlap=noverlap, cmap='jet_r')
         plt.ylim([0, y_lim])
         plt.xlim([0, x_lim])
         plt.colorbar()
@@ -224,13 +231,13 @@ class Gabor:
 
 if __name__ == '__main__':
     gabor = Gabor()
-    #gabor.read_wav('../input/Export1/Taka_a_E2_5.wav')
-    gabor.read_wav('../input/hbd.wav')
+    gabor.read_wav('../input/Export1/Taka_a_E2_5.wav')
+    #gabor.read_wav('../input/hbd.wav')
     gabor.own_fourier_transform()
     gabor.fourier_transform()
-    #gabor.plot_sound()
+    gabor.plot_sound()
     gabor.gabor_transform()
-    gabor.own_gabor_transform()
+    #gabor.own_gabor_transform()
     #gabor.gabor_transform()
 
 
