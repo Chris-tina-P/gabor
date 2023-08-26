@@ -55,9 +55,8 @@ class Gabor:
         # define time domain
         time = np.linspace(0, self.song_length_seconds, self.data_size)
 
-        # plot sound file and add legend
+        # plot sound file and add labels
         plt.plot(time, self.data)
-        plt.legend()
         plt.xlabel("Time [s]")
         plt.ylabel("Amplitude")
         plt.show()
@@ -119,7 +118,7 @@ class Gabor:
         # plotting spectral content of sound wave
         self.plot_fourier(fourier_data_shift)
 
-    def own_gabor_transform(self) -> None:
+    def own_gabor_transform(self, x_lim: int = 1000) -> None:
         """
         This method computes und plots several fourier transforms of the loaded sound file
         TODO: plot spectrogram out of the fourier transforms
@@ -128,9 +127,10 @@ class Gabor:
         time_domain = np.linspace(0, self.song_length_seconds, self.data_size)
         results = []
 
+        # TODO: why 8 and 11000?
         for i in range(0, 8):
             clear_output(wait=True)
-            plt.xlim([0, 1000])
+            plt.xlim([0, x_lim])
             gaussian = 11000 * np.exp(-2 * np.power(time_domain - i, 2))
 
             gaussian_filtered = self.data * gaussian
@@ -199,7 +199,8 @@ class Gabor:
         x = np.asarray(data, dtype=float)
         n = x.shape[0]
 
-        if n <= 32:  # this cutoff should be optimized
+        cutoff = 32  # cutoff should be optimized
+        if n <= cutoff:
             return self.slow_dft(x)
         else:
             x_even = self.recursive_fft(x[::2])
