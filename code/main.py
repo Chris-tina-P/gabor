@@ -1,5 +1,6 @@
 import math
 
+from numpy import ndarray
 from scipy import signal
 from scipy.io import wavfile
 import matplotlib.pyplot as plt
@@ -8,11 +9,14 @@ from scipy.fftpack import fft, fftshift
 from IPython.display import clear_output
 import stft
 
-x_lim = 2
-y_lim = 500
+x_lim = 25
+y_lim = 350
 
 
 class Gabor:
+    """
+    This class is used to read in a sound file and compute the Gabor transform of the sound file.
+    """
 
     def __init__(self):
         self.data = None
@@ -21,7 +25,13 @@ class Gabor:
         self.song_length_seconds = None
         self.freq_domain = None
 
-    def read_wav(self, name):
+    def read_wav(self, name) -> None:
+        """
+        This method reads in a sound file and prints the sound metadata.
+        TODO: Error with own wav files
+        :param name: The name of the sound file.
+        :return: None
+        """
         # read in sound file
         self.samplerate, self.data = wavfile.read(name)
 
@@ -41,18 +51,27 @@ class Gabor:
         print("Sample rate:", self.samplerate)
         print("Song length (seconds):", self.song_length_seconds, "seconds")
 
-    # This method plots the loaded sound file
-    def plot_sound(self):
+    def plot_sound(self) -> None:
+        """
+        This method plots the loaded sound file as diagram with amplitude over time.
+        :return: None
+        """
         # define time domain
         time = np.linspace(0, self.song_length_seconds, self.data_size)
+
+        # plot sound file and add legend
         plt.plot(time, self.data)
         plt.legend()
         plt.xlabel("Time [s]")
         plt.ylabel("Amplitude")
         plt.show()
 
-    # This method computes the Gabor transform of the loaded sound file
-    def gabor_transform(self):
+    def gabor_transform_not_working(self) -> None:
+        """
+        This method should compute the Gabor transform of the loaded sound file. Has not been working yet!
+        TODO: Fix this method
+        :return: None
+        """
         # define the window size and overlap
         window_size = 1024
         overlap = 0.5
@@ -66,8 +85,11 @@ class Gabor:
         plt.xlabel('Time [sec]')
         plt.show()
 
-    def fourier_transform(self):
-
+    def fourier_transform(self) -> None:
+        """
+        This method computes and plots the Fourier transform of the loaded sound file with predefined fft.
+        :return: None
+        """
         # fourier transform
         fourier_data = abs(fft(self.data))
         fourier_data_shift = fftshift(fourier_data)
@@ -79,19 +101,29 @@ class Gabor:
         plt.plot(self.freq_domain, fourier_data_shift)
         plt.show()
 
-    def fourier_transform2(self):
+    def own_fourier_transform(self) -> None:
+        """
+        This method computes and plots the Fourier transform of the loaded sound file with own fft.
+        BUT DIFFERENT RESULTS THAN WITH SCIPY FFT!
+        :return: None
+        """
         # fourier transform
-        fourier_data = abs(self.FFT(self.data))
-        fourier_data_shift = self.fftshift(fourier_data)
+        fourier_data = abs(self.fft(self.data))
+        fourier_data_shift = self.fft_shift(fourier_data)
 
         # plotting spectral content of sound wave
-        plt.xlim([0, 5000])
+        plt.xlim([0, 1000])
         plt.xlabel("Frequency (Hz)")
         plt.ylabel("Amplitude")
         plt.plot(self.freq_domain, fourier_data_shift)
         plt.show()
 
-    def gabor_transform2(self):
+    def own_gabor_transform(self) -> None:
+        """
+        This method computes und plots several fourier transforms of the loaded sound file
+        TODO: plot spectrogram out of the fourier transforms
+        :return:
+        """
         time_domain = np.linspace(0, self.song_length_seconds, self.data_size)
         results = []
 
@@ -110,7 +142,11 @@ class Gabor:
             plt.plot(self.freq_domain, fourier_data_shift)
             plt.pause(0.5)
 
-    def gabor_transform3(self):
+    def gabor_transform(self) -> None:
+        """
+        This method computes the Gabor transform of the loaded sound file and plots spectrogram.
+        :return: None
+        """
         nfft = 10000
         plt.specgram(self.data, NFFT=nfft, Fs=self.samplerate, noverlap=500, cmap='jet_r')
         plt.ylim([0, y_lim])
@@ -120,8 +156,12 @@ class Gabor:
         plt.ylabel("Frequency (Hz)")
         plt.show()
 
-    def DFT_slow(self, data):
-        """Compute the discrete Fourier Transform of the 1D array x"""
+    def slow_dft(self, data) -> ndarray:
+        """
+        Compute the discrete Fourier Transform of the 1D array x
+        :param data: The data to transform
+        :return: The transformed data
+        """
         x = np.asarray(data, dtype=float)
         N = x.shape[0]
         n = np.arange(N)
@@ -129,48 +169,69 @@ class Gabor:
         M = np.exp(-2j * np.pi * k * n / N)
         return np.dot(M, x)
 
-    def preprocessFFT(self, data):
-        logarithmus = int(math.log(len(data), 2))
-        next_power_of_two = 2 ** (logarithmus + 1)
+    def preprocess_fft(self, data) -> ndarray:
+        """
+        This method preprocesses the data for the FFT by adding zeros to the end of the data array.
+        :param data: The data to preprocess
+        :return: The preprocessed data, ready for the FFT
+        """
+        logarithm = int(math.log(len(data), 2))
+        next_power_of_two = 2 ** (logarithm + 1)
 
         if len(data) < next_power_of_two:
             data = np.append(data, np.zeros(next_power_of_two-len(data)))
 
         return data
 
-    def recursiveFFT(self, data):
+    def recursive_fft(self, data) -> ndarray:
+        """
+        This method computes the FFT of the data recursively.
+        :param data: The data to transform
+        :return: The transformed data
+        """
         x = np.asarray(data, dtype=float)
-        N = x.shape[0]
+        n = x.shape[0]
 
-        if N <= 32:  # this cutoff should be optimized
-            return self.DFT_slow(x)
+        if n <= 32:  # this cutoff should be optimized
+            return self.slow_dft(x)
         else:
-            X_even = self.recursiveFFT(x[::2])
-            X_odd = self.recursiveFFT(x[1::2])
-            factor = np.exp(-2j * np.pi * np.arange(N) / N)
-            return np.concatenate([X_even + factor[:N // 2] * X_odd,
-                                   X_even + factor[N // 2:] * X_odd])
+            x_even = self.recursive_fft(x[::2])
+            x_odd = self.recursive_fft(x[1::2])
+            factor = np.exp(-2j * np.pi * np.arange(n) / n)
+            return np.concatenate([x_even + factor[:n // 2] * x_odd,
+                                   x_even + factor[n // 2:] * x_odd])
 
-    def FFT(self, data):
-        """A recursive implementation of the 1D Cooley-Tukey FFT"""
+    def fft(self, data) -> ndarray:
+        """
+        A recursive implementation of the 1D Cooley-Tukey FFT
+        :param data: The data to transform
+        :return: The transformed data
+        """
         n_original = len(data)
-        x = self.preprocessFFT(data)
-        processed = self.recursiveFFT(x)
+        x = self.preprocess_fft(data)
+        processed = self.recursive_fft(x)
         return processed[:n_original]
 
-    def fftshift(self, fourier_data):
+    def fft_shift(self, fourier_data) -> ndarray:
+        """
+        This method shifts the fourier data to the left.
+        :param fourier_data: The fourier data to shift
+        :return: The shifted fourier data
+        """
         n = len(fourier_data)
         return np.concatenate((fourier_data[n // 2:], fourier_data[:n // 2]))
 
 
 if __name__ == '__main__':
     gabor = Gabor()
-    gabor.read_wav('../input/Sin_A_2sec.wav')
-    gabor.fourier_transform2()
-    # gabor.read_wav('../input/hbd.wav')
-    gabor.plot_sound()
-    gabor.gabor_transform3()
-    # gabor.gabor_transform2()
+    #gabor.read_wav('../input/Export1/Taka_a_E2_5.wav')
+    gabor.read_wav('../input/hbd.wav')
+    gabor.own_fourier_transform()
+    gabor.fourier_transform()
+    #gabor.plot_sound()
+    gabor.gabor_transform()
+    gabor.own_gabor_transform()
+    #gabor.gabor_transform()
 
 
     # Interesting links
