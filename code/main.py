@@ -193,15 +193,11 @@ class Gabor:
         if x_lim <= 0:
             x_lim = self.song_length_seconds
 
-        spectrum, freqs, t, _ = plt.specgram(self.data, NFFT=nfft, Fs=self.samplerate, noverlap=noverlap, cmap='jet_r')
-
-        Z = 10. * np.log10(spectrum)
-        Z = np.flipud(Z)
-        # Z = spectrum
+        spectrum, freqs, _, _ = plt.specgram(self.data, NFFT=nfft, Fs=self.samplerate, noverlap=noverlap, cmap='jet_r')
 
         extend = [0, 0, freqs[0], freqs[-1]]
 
-        im = plt.imshow(Z, cmap='jet', vmin=0, vmax=y_lim, extent=extend, origin='upper')
+        im = plt.imshow(spectrum, cmap='jet', vmin=0, vmax=y_lim, extent=extend)
         plt.axis('auto')
         plt.colorbar(im)
         plt.ylim([0, y_lim])
