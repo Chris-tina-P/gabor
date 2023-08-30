@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.fftpack import fft, fftshift
 from IPython.display import clear_output
+from typing import List
 
 
 class Gabor:
@@ -118,11 +119,11 @@ class Gabor:
         # plotting spectral content of sound wave
         self.plot_fourier(fourier_data_shift)
 
-    def own_gabor_transform(self, x_lim: int = 1000) -> None:
+    def windowed_fourier_transform(self, x_lim: int = 1000) -> List[ndarray]:
         """
         This method computes und plots several fourier transforms of the loaded sound file
         TODO: plot spectrogram out of the fourier transforms
-        :return:
+        :return: A list of the gabor transformed data at given time points.
         """
         time_domain = np.linspace(0, self.song_length_seconds, self.data_size)
         results = []
@@ -130,7 +131,6 @@ class Gabor:
         # TODO: why 8 and 11000?
         for i in range(0, 8):
             clear_output(wait=True)
-            plt.xlim([0, x_lim])
             gaussian = 11000 * np.exp(-2 * np.power(time_domain - i, 2))
 
             gaussian_filtered = self.data * gaussian
@@ -138,10 +138,37 @@ class Gabor:
             fourier_data = abs(fft(gaussian_filtered))
             fourier_data_shift = fftshift(fourier_data)
 
-            results.append(fourier_data_shift)
+            # Iterate over the data and take the mean
+            mean_data_values = 5000
+            div = len(fourier_data_shift) // mean_data_values
+            mean_data = np.zeros(mean_data_values)
 
-            plt.plot(self.freq_domain, fourier_data_shift)
-            plt.pause(0.5)
+            freq = np.zeros(mean_data_values)
+
+            # TODO: Points in the end are missing (cut at mean_data_values * div)
+            for j in range(0, mean_data_values):
+                mean_data[j] = np.mean(fourier_data_shift[j * div:(j + 1) * div])
+                freq[j] = (24000 + np.mean(self.freq_domain[j * div:(j + 1) * div]))/2
+
+            freq -= np.min(freq)
+
+            results.append(mean_data)
+
+        return results, freq
+
+    def own_gabor_transform(self, y_lim=1000, x_lim=0) -> None:
+        """
+        This method computes the Gabor transform of the loaded sound file. It uses the own windowed fourier transform.
+        :return: None
+        """
+        windowed_fourier_data, freq = self.windowed_fourier_transform()
+
+        # Transpose the data to get the right shape
+        windowed_fourier_data = np.transpose(windowed_fourier_data)
+
+        im = plt.imshow(windowed_fourier_data, cmap='jet', vmin=0, vmax=y_lim, extent=[0, 1200, 0, 1000])
+        plt.colorbar(im)
+        plt.show()
 
     def gabor_transform(self, nfft: int = 10000, noverlap: int = 500, x_lim: int = 0, y_lim: int = 1000) -> None:
         """
@@ -186,7 +213,7 @@ class Gabor:
         next_power_of_two = 2 ** (logarithm + 1)
 
         if len(data) < next_power_of_two:
-            data = np.append(data, np.zeros(next_power_of_two-len(data)))
+            data = np.append(data, np.zeros(next_power_of_two - len(data)))
 
         return data
 
@@ -233,14 +260,13 @@ class Gabor:
 if __name__ == '__main__':
     gabor = Gabor()
     gabor.read_wav('../input/Export1/Taka_a_E2_5.wav')
-    #gabor.read_wav('../input/hbd.wav')
-    gabor.own_fourier_transform()
-    gabor.fourier_transform()
-    gabor.plot_sound()
+    # gabor.read_wav('../input/hbd.wav')
+    # gabor.own_fourier_transform()
+    # gabor.fourier_transform()
+    # gabor.plot_sound()
     gabor.gabor_transform()
-    #gabor.own_gabor_transform()
-    #gabor.gabor_transform()
-
+    gabor.own_gabor_transform()
+    # gabor.gabor_transform()
 
     # Interesting links
     # https://github.com/libAudioFlux/audioFlux
