@@ -125,8 +125,15 @@ class Gabor:
         TODO: plot spectrogram out of the fourier transforms
         :return: A list of the gabor transformed data at given time points.
         """
-        time_domain = np.linspace(0, self.song_length_seconds, self.data_size)
         results = []
+
+        # Cut out all frequencies below 0 and corresponding fourier data
+        # positive_indices = self.freq_domain >= 0
+        # self.freq_domain = self.freq_domain[positive_indices]
+        # self.data = self.data[positive_indices]
+        # self.data_size = self.data.shape[0]
+
+        time_domain = np.linspace(0, self.song_length_seconds, self.data_size)
 
         # TODO: why 8 and 11000?
         for i in range(0, 8):
@@ -137,6 +144,13 @@ class Gabor:
 
             fourier_data = abs(fft(gaussian_filtered))
             fourier_data_shift = fftshift(fourier_data)
+
+            # # plot the data
+            # plt.xlim([0, x_lim])
+            # plt.xlabel("Frequency (Hz)")
+            # plt.ylabel("Amplitude")
+            # plt.plot(self.freq_domain, fourier_data_shift)
+            # plt.show()
 
             # Iterate over the data and take the mean
             mean_data_values = 5000
@@ -150,7 +164,12 @@ class Gabor:
                 mean_data[j] = np.mean(fourier_data_shift[j * div:(j + 1) * div])
                 freq[j] = (24000 + np.mean(self.freq_domain[j * div:(j + 1) * div]))/2
 
-            freq -= np.min(freq)
+            # # If frequency is below 0, delete the value and the corresponding mean_data
+            # j = 0
+            # while j < len(freq):
+            #     if freq[j] < 0:
+            #         freq = np.delete(freq, j)
+            #         mean_data = np.delete(mean_data, j)
 
             results.append(mean_data)
 
@@ -166,8 +185,29 @@ class Gabor:
         # Transpose the data to get the right shape
         windowed_fourier_data = np.transpose(windowed_fourier_data)
 
-        im = plt.imshow(windowed_fourier_data, cmap='jet', vmin=0, vmax=y_lim, extent=[0, 1200, 0, 1000])
+        im = plt.imshow(windowed_fourier_data, cmap='jet', vmin=0, vmax=y_lim, extent=[0, 1200, 0, 1100])
         plt.colorbar(im)
+        plt.show()
+
+    def gabor_own_plot(self, nfft: int = 10000, noverlap: int = 500, x_lim: int = 0, y_lim: int = 1000) -> None:
+        if x_lim <= 0:
+            x_lim = self.song_length_seconds
+
+        spectrum, freqs, t, _ = plt.specgram(self.data, NFFT=nfft, Fs=self.samplerate, noverlap=noverlap, cmap='jet_r')
+
+        Z = 10. * np.log10(spectrum)
+        Z = np.flipud(Z)
+        # Z = spectrum
+
+        extend = [0, 0, freqs[0], freqs[-1]]
+
+        im = plt.imshow(Z, cmap='jet', vmin=0, vmax=y_lim, extent=extend, origin='upper')
+        plt.axis('auto')
+        plt.colorbar(im)
+        plt.ylim([0, y_lim])
+        plt.xlim([0, x_lim])
+        plt.xlabel("Time (seconds)")
+        plt.ylabel("Frequency (Hz)")
         plt.show()
 
     def gabor_transform(self, nfft: int = 10000, noverlap: int = 500, x_lim: int = 0, y_lim: int = 1000) -> None:
@@ -264,8 +304,9 @@ if __name__ == '__main__':
     # gabor.own_fourier_transform()
     # gabor.fourier_transform()
     # gabor.plot_sound()
-    gabor.gabor_transform()
-    gabor.own_gabor_transform()
+    # gabor.gabor_transform()
+    gabor.gabor_own_plot()
+    # gabor.own_gabor_transform()
     # gabor.gabor_transform()
 
     # Interesting links
