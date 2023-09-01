@@ -116,9 +116,8 @@ class Gabor:
         # Calculate the spectrum
         t = np.linspace(0, self.song_length_seconds, self.data_size)
         # TODO: why 8 and 11000?
-        for i in range(0, 8):
-            clear_output(wait=True)
-            gaussian = 11000 * np.exp(-2 * np.power(t - i, 2))
+        for i in range(0, 48):
+            gaussian = 11000 * np.exp(-2 * np.power(t - i/6, 2))
 
             gaussian_filtered = self.data * gaussian
 
@@ -131,11 +130,19 @@ class Gabor:
 
             spectrum.append(mean_data)
 
+        # convert spectrum to ndarray
+        spectrum = np.asarray(spectrum)
+        spectrum = spectrum.transpose()
+
         # Calculate frequency
         freq = np.linspace(0, np.max(self.freq_domain), mean_data_values)
 
         # Calculate time points
-        t = np.linspace(0, self.song_length_seconds, 8)
+        NFFT = 10000
+        noverlap = 500
+        Fs = self.samplerate
+
+        t = np.arange(NFFT/2, self.data_size - NFFT/2+1, NFFT - noverlap) / Fs
 
         return spectrum, freq, t
 
@@ -145,10 +152,6 @@ class Gabor:
         :return: None
         """
         spectrum, freqs, t = self.windowed_fourier_transform()
-
-        # convert spectrum to ndarray
-        spectrum = np.asarray(spectrum)
-        spectrum = spectrum.transpose()
 
         # im = plt.imshow(spectrum, cmap='jet', vmin=0, vmax=y_lim, extent=[0, 1200, 0, 1100])
         # plt.colorbar(im)
