@@ -1,6 +1,7 @@
 import math
 
 from numpy import ndarray
+from numpy.fft import rfft
 from scipy import signal
 from scipy.io import wavfile
 import matplotlib.pyplot as plt
@@ -67,10 +68,8 @@ class Gabor:
         :return: None
         """
         # fourier transform
-        fourier_data = abs(fft(self.data))
-        fourier_data_shift = fftshift(fourier_data)
-
-        self.plot_fourier(fourier_data_shift)
+        fourier_data = np.abs(rfft(self.data))
+        self.plot_fourier(fourier_data)
 
     def plot_fourier(self, fourier_data, x_lim: int = 1000) -> None:
         """
@@ -79,7 +78,6 @@ class Gabor:
         :param fourier_data: The transformed data to plot.
         :return: None
         """
-
         plt.xlim([0, x_lim])
         plt.xlabel("Frequency (Hz)")
         plt.ylabel("Amplitude")
