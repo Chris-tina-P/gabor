@@ -61,25 +61,6 @@ class Gabor:
         plt.ylabel("Amplitude")
         plt.show()
 
-    def gabor_transform_not_working(self) -> None:
-        """
-        This method should compute the Gabor transform of the loaded sound file. Has not been working yet!
-        TODO: Fix this method
-        :return: None
-        """
-        # define the window size and overlap
-        window_size = 1024
-        overlap = 0.5
-
-        # compute the Gabor transform
-        f, t, Sxx = signal.spectrogram(self.data, fs=self.samplerate, window='hann', detrend=False, scaling='spectrum')
-
-        # plot the Gabor transform
-        plt.specgram(self.data, Fs=self.samplerate, NFFT=window_size, noverlap=overlap * window_size, cmap='jet')
-        plt.ylabel('Frequency [Hz]')
-        plt.xlabel('Time [sec]')
-        plt.show()
-
     def fourier_transform(self) -> None:
         """
         This method computes and plots the Fourier transform of the loaded sound file with predefined fft.
