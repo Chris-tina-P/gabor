@@ -171,17 +171,14 @@ class Gabor:
         if x_lim <= 0:
             x_lim = self.song_length_seconds
 
-        spectrum, freqs, _, _ = plt.specgram(self.data, NFFT=nfft, Fs=self.samplerate, noverlap=noverlap, cmap='jet_r')
+        spectrum, freqs, t, _ = plt.specgram(self.data, NFFT=nfft, Fs=self.samplerate, noverlap=noverlap, cmap='jet_r')
 
-        extend = [0, 0, freqs[0], freqs[-1]]
-
-        im = plt.imshow(spectrum, cmap='jet', vmin=0, vmax=y_lim, extent=extend)
-        plt.axis('auto')
-        plt.colorbar(im)
+        plt.pcolormesh(t, freqs, spectrum, shading='gouraud', cmap='viridis', norm='log')
         plt.ylim([0, y_lim])
-        plt.xlim([0, x_lim])
-        plt.xlabel("Time (seconds)")
-        plt.ylabel("Frequency (Hz)")
+        plt.ylabel('Frequenz (Hz)')
+        plt.xlabel('Zeit (s)')
+        plt.title('Spektrogramm aus FFT-Werten')
+        plt.colorbar(label='Leistungspegel (dB)')
         plt.show()
 
     def gabor_transform(self, nfft: int = 10000, noverlap: int = 500, x_lim: int = 0, y_lim: int = 1000) -> None:
