@@ -40,8 +40,7 @@ class Gabor:
         self.data_size = self.data.shape[0]
         self.song_length_seconds = self.data_size / self.samplerate
 
-        # define frequency domain
-        self.freq_domain = np.linspace(- self.samplerate / 2, self.samplerate / 2, self.data_size)
+        self.freq_domain = np.fft.rfftfreq(self.data_size, d=1. / self.samplerate)
 
         # print sound metadata
         print("Data size:", self.data_size)
