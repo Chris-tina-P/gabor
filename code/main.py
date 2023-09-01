@@ -141,8 +141,10 @@ class Gabor:
         NFFT = 10000
         noverlap = 500
         Fs = self.samplerate
-
         t = np.arange(NFFT/2, self.data_size - NFFT/2+1, NFFT - noverlap) / Fs
+
+        # upper_limit = (self.data_size - NFFT/2+1 + NFFT-noverlap)//(NFFT - noverlap)
+        # np.linspace(0, self.song_length_seconds, 48)
 
         return spectrum, freq, t
 
