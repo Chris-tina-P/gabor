@@ -173,7 +173,7 @@ class Gabor:
 
         spectrum, freqs, t, _ = plt.specgram(self.data, NFFT=nfft, Fs=self.samplerate, noverlap=noverlap, cmap='jet_r')
 
-        plt.pcolormesh(t, freqs, spectrum, shading='gouraud', cmap='viridis', norm='log')
+        plt.pcolormesh(t, freqs, spectrum, cmap='jet_r', norm='log')  # shading='gouraud' makes diagram smoother
         plt.ylim([0, y_lim])
         plt.ylabel('Frequenz (Hz)')
         plt.xlabel('Zeit (s)')
