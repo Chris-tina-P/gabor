@@ -1,14 +1,10 @@
 import math
 
-from numpy import ndarray
-from numpy.fft import rfft
-from scipy import signal
-from scipy.io import wavfile
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.fftpack import fft, fftshift
-from IPython.display import clear_output
-from typing import List
+from numpy import ndarray
+from numpy.fft import rfft
+from scipy.io import wavfile
 
 
 def gaussian(x, mu, sig):
@@ -16,7 +12,11 @@ def gaussian(x, mu, sig):
         1.0 / (np.sqrt(2.0 * np.pi) * sig) * np.exp(-np.power((x - mu) / sig, 2.0) / 2)
     )
 
+# TODO: Remove commented out code that is unused
+# TODO: Add and comment method parameters
 
+# TODO: Rename class, maybe split into fourier and gabor class
+# TODO: Remove unused methods
 class Gabor:
     """
     This class is used to read in a sound file and compute the Gabor transform of the sound file.
@@ -75,9 +75,9 @@ class Gabor:
         """
         # fourier transform
         fourier_data = np.abs(rfft(self.data))
-        self.plot_fourier(fourier_data)
+        self.plot_fourier(fourier_data, self.freq_domain)
 
-    def plot_fourier(self, fourier_data, x_lim: int = 1000) -> None:
+    def plot_fourier(self, fourier_data, freq_domain,  x_lim: int = 1000) -> None:
         """
         This method plots the Fourier transform of the transformed data.
         :param x_lim: The frequency limit of the plot (x limit)
@@ -87,7 +87,7 @@ class Gabor:
         plt.xlim([0, x_lim])
         plt.xlabel("Frequency (Hz)")
         plt.ylabel("Amplitude")
-        plt.plot(self.freq_domain, fourier_data)
+        plt.plot(freq_domain, fourier_data)
         plt.show()
 
     def own_fourier_transform(self) -> None:
@@ -98,11 +98,13 @@ class Gabor:
         """
         # fourier transform
         fourier_data = abs(self.fft(self.data))
-        fourier_data_shift = self.fft_shift(fourier_data)
+
+        freq_domain = np.fft.fftfreq(self.data_size, d=1. / self.samplerate)
 
         # plotting spectral content of sound wave
-        self.plot_fourier(fourier_data_shift)
+        self.plot_fourier(fourier_data, freq_domain)
 
+    # TODO: Add params to method signature
     def windowed_fourier_transform(self, x_lim: int = 1000, own_fourier: bool = False):
         """
         This method computes und plots several fourier transforms of the loaded sound file
@@ -283,12 +285,12 @@ if __name__ == '__main__':
     gabor = Gabor()
     gabor.read_wav('../input/Export1/Klavier_A_leicht.wav')
     # gabor.read_wav('../input/hbd.wav')
-    # gabor.own_fourier_transform()
-    # gabor.fourier_transform()
+    gabor.own_fourier_transform()
+    gabor.fourier_transform()
     # gabor.plot_sound()
-    gabor.gabor_transform(y_lim=2000)
+    #gabor.gabor_transform(y_lim=2000)
     # gabor.gabor_own_plot()
-    gabor.own_gabor_transform()
+    #gabor.own_gabor_transform()
     # gabor.gabor_transform()
 
     # Interesting links
