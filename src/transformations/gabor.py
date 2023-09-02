@@ -41,6 +41,17 @@ class Gabor(SoundTransform):
     def plot(self, spectrum, frequencies, t, y_lim: int = 1000) -> None:
         pass
 
+    def process(self, filename: str) -> None:
+        """
+        Loads the file, processes and plots the result.
+        :param filename: The name of the file.
+        :return: None
+        """
+        super().process(filename)
+        spectrum, frequencies, t = self.transform()
+        self.plot(spectrum, frequencies, t)
+
+
 class OwnGabor(Gabor):
 
     def __int__(self, own_fourier: bool = False):

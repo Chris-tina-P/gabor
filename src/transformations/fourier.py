@@ -14,7 +14,6 @@ class Fourier(SoundTransform):
     def read_wav(self, name):
         super().read_wav(name)
         self.frequencies = np.fft.rfftfreq(self.data_size, d=1. / self.samplerate)
-        self.test = 0
 
     @abstractmethod
     def transform(self) -> (ndarray, ndarray):
@@ -23,6 +22,16 @@ class Fourier(SoundTransform):
     @abstractmethod
     def plot(self, fourier_data, frequencies, x_lim: int = 1000) -> None:
         pass
+
+    def process(self, filename: str) -> None:
+        """
+        Loads the file, processes and plots the result.
+        :param filename: The name of the file.
+        :return: None
+        """
+        super().process(filename)
+        fourier_data, frequencies = self.transform()
+        self.plot(fourier_data, frequencies)
 
 
 class OwnFourier(Fourier):

@@ -1,4 +1,5 @@
-from src.transformations.gabor import OwnGabor
+from src.transformations.fourier import NpFourier, OwnFourier
+from src.transformations.gabor import OwnGabor, NpGabor
 
 # TODO: Remove commented out src that is unused
 # TODO: Add and comment method parameters
@@ -23,7 +24,5 @@ if __name__ == '__main__':
     # spectrum, frequencies, t = ownGabor.transform()
     # ownGabor.plot(spectrum, frequencies, t)
 
-    ownGabor = OwnGabor(own_fourier=True)
-    ownGabor.read_wav('../input/Export1/Klavier_A_leicht.wav')
-    spectrum, frequencies, t = ownGabor.transform()
-    ownGabor.plot(spectrum, frequencies, t)
+    ownGabor = OwnGabor()
+    ownGabor.process('../input/Export1/Klavier_A_leicht.wav')

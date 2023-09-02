@@ -1,3 +1,5 @@
+from abc import abstractmethod
+
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.io import wavfile
@@ -48,4 +50,12 @@ class SoundTransform:
         plt.xlabel("Time [s]")
         plt.ylabel("Amplitude")
         plt.show()
+
+    def process(self, filename: str) -> None:
+        """
+        Loads the file, processes and plots the result.
+        :param filename: The name of the file.
+        :return: None
+        """
+        self.read_wav(filename)
 
