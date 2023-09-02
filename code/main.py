@@ -103,12 +103,16 @@ class Gabor:
         # plotting spectral content of sound wave
         self.plot_fourier(fourier_data_shift)
 
-    def windowed_fourier_transform(self, x_lim: int = 1000):
+    def windowed_fourier_transform(self, x_lim: int = 1000, own_fourier: bool = False):
         """
         This method computes und plots several fourier transforms of the loaded sound file
         TODO: plot spectrogram out of the fourier transforms
 
         """
+        fft_to_use = rfft
+        if own_fourier:
+            fft_to_use = self.fft
+
         spectrum = []
         mean_data_values = 5001
         NFFT = 10000
@@ -130,7 +134,7 @@ class Gabor:
 
             gaussian_filtered = self.data * window
 
-            fourier_data = abs(rfft(gaussian_filtered))
+            fourier_data = abs(fft_to_use(gaussian_filtered))
 
             # Calculate the mean
             mean_data = np.zeros(mean_data_values)
@@ -155,12 +159,12 @@ class Gabor:
 
         return spectrum, freq, t
 
-    def own_gabor_transform(self, y_lim=2000, x_lim=0) -> None:
+    def own_gabor_transform(self, y_lim=2000, x_lim=0, own_fourier=False) -> None:
         """
         This method computes the Gabor transform of the loaded sound file. It uses the own windowed fourier transform.
         :return: None
         """
-        spectrum, freqs, t = self.windowed_fourier_transform()
+        spectrum, freqs, t = self.windowed_fourier_transform(own_fourier=own_fourier)
 
         # im = plt.imshow(spectrum, cmap='jet', vmin=0, vmax=y_lim, extent=[0, 1200, 0, 1100])
         # plt.colorbar(im)
