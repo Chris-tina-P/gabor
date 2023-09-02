@@ -110,7 +110,7 @@ class Gabor:
 
         """
         spectrum = []
-        mean_data_values = 5000
+        mean_data_values = 5001
         NFFT = 10000
         noverlap = 500
         Fs = self.samplerate
@@ -143,19 +143,19 @@ class Gabor:
         spectrum = np.asarray(spectrum)
         spectrum = spectrum.transpose()
 
-        # Calculate frequency
-        freq = np.linspace(0, np.max(self.freq_domain), mean_data_values)
+        # Calculate frequency with the mean
+        # freq = np.linspace(0, np.max(self.freq_domain), mean_data_values)
+        freq = np.zeros(mean_data_values)
+        for i in range(0, mean_data_values):
+            freq[i] = np.mean(self.freq_domain[i * div:(i + 1) * div])
 
         # Calculate time points
-
         t = np.arange(NFFT/2, self.data_size - NFFT/2+1, NFFT - noverlap) / Fs
-
-
         # np.linspace(0, self.song_length_seconds, 48)
 
         return spectrum, freq, t
 
-    def own_gabor_transform(self, y_lim=1000, x_lim=0) -> None:
+    def own_gabor_transform(self, y_lim=2000, x_lim=0) -> None:
         """
         This method computes the Gabor transform of the loaded sound file. It uses the own windowed fourier transform.
         :return: None
@@ -277,12 +277,12 @@ class Gabor:
 
 if __name__ == '__main__':
     gabor = Gabor()
-    # gabor.read_wav('../input/Export1/Taka_a_E2_5.wav')
-    gabor.read_wav('../input/hbd.wav')
+    gabor.read_wav('../input/Export1/Klavier_A_leicht.wav')
+    # gabor.read_wav('../input/hbd.wav')
     # gabor.own_fourier_transform()
     # gabor.fourier_transform()
     # gabor.plot_sound()
-    gabor.gabor_transform()
+    gabor.gabor_transform(y_lim=2000)
     # gabor.gabor_own_plot()
     gabor.own_gabor_transform()
     # gabor.gabor_transform()
