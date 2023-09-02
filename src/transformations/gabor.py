@@ -6,8 +6,8 @@ from matplotlib import pyplot as plt
 from numpy import ndarray
 from numpy.fft import rfft
 
-from src.gabor.fourier import OwnFourier
-from src.gabor.sound_transform import SoundTransform
+from src.transformations.fourier import OwnFourier
+from src.transformations.sound_transform import SoundTransform
 
 
 def gaussian(x, mu, sig):
