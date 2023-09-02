@@ -223,9 +223,13 @@ class Gabor(SoundTransform):
         self.frequencies = None
 
         if own_fourier:
-            self.fourier = OwnFourier()
+            self.fourier = OwnFourier().fft
         else:
-            self.fourier = NpFourier()
+            self.fourier = rfft
+
+    def read_wav(self, name):
+        super().read_wav(name)
+        self.frequencies = np.fft.rfftfreq(self.data_size, d=1. / self.samplerate)
 
     @abstractmethod
     def transform(self, mean_data_values=5001, NFFT=10000, noverlap=500) -> (List[ndarray], ndarray, ndarray):
@@ -238,8 +242,8 @@ class Gabor(SoundTransform):
 
 class OwnGabor(Gabor):
 
-    def __int__(self):
-        super().__init__()
+    def __int__(self, own_fourier: bool = False):
+        super().__init__(own_fourier=own_fourier)
 
     # TODO: Add params to method signature
     def transform(self, mean_data_values=5001, NFFT=10000, noverlap=500) -> (List[ndarray], ndarray, ndarray):
@@ -248,7 +252,7 @@ class OwnGabor(Gabor):
         TODO: plot spectrogram out of the fourier transforms
 
         """
-        fft_to_use = self.fourier.transform
+        fft_to_use = self.fourier
 
         spectrum = []
         Fs = self.samplerate
@@ -605,23 +609,23 @@ class Gabor:
 
 
 if __name__ == '__main__':
-    gabor = Gabor()
-    gabor.read_wav('../input/Export1/Klavier_A_leicht.wav')
-    # gabor.own_fourier_transform()
-    gabor.fourier_transform()
-    # gabor.plot_sound()
-    # gabor.gabor_transform(y_lim=2000)
-    # gabor.gabor_own_plot()
-    # gabor.own_gabor_transform()
-    # gabor.gabor_transform()
+    # fourier = OwnFourier()
+    # fourier.read_wav('../input/Export1/Klavier_A_leicht.wav')
+    # data, frequencies = fourier.transform()
+    # fourier.plot(data, frequencies)
 
-    # Interesting links
-    # https://github.com/libAudioFlux/audioFlux
-    # https://github.com/faroit/awesome-python-scientific-audio/blob/master/README.md
-    # https://www.tutorialspoint.com/scipy/scipy_fftpack.htm
-    # https://docs.scipy.org/doc/scipy/reference/fft.html
+    # npGabor = NpGabor()
+    # npGabor.read_wav('../input/Export1/Klavier_A_leicht.wav')
+    # spectrum, frequencies, t = npGabor.transform()
+    # npGabor.plot(spectrum, frequencies, t)
+    # npGabor.specgram()
 
-    fourier = OwnFourier()
-    fourier.read_wav('../input/Export1/Klavier_A_leicht.wav')
-    data, frequencies = fourier.transform()
-    fourier.plot(data, frequencies)
+    # ownGabor = OwnGabor()
+    # ownGabor.read_wav('../input/Export1/Klavier_A_leicht.wav')
+    # spectrum, frequencies, t = ownGabor.transform()
+    # ownGabor.plot(spectrum, frequencies, t)
+
+    ownGabor = OwnGabor(own_fourier=True)
+    ownGabor.read_wav('../input/Export1/Klavier_A_leicht.wav')
+    spectrum, frequencies, t = ownGabor.transform()
+    ownGabor.plot(spectrum, frequencies, t)
