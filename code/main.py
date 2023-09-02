@@ -11,6 +11,12 @@ from IPython.display import clear_output
 from typing import List
 
 
+def gaussian(x, mu, sig):
+    return (
+        1.0 / (np.sqrt(2.0 * np.pi) * sig) * np.exp(-np.power((x - mu) / sig, 2.0) / 2)
+    )
+
+
 class Gabor:
     """
     This class is used to read in a sound file and compute the Gabor transform of the sound file.
@@ -105,7 +111,11 @@ class Gabor:
         """
         spectrum = []
         mean_data_values = 5000
+        NFFT = 10000
+        noverlap = 500
+        Fs = self.samplerate
         div = len(self.freq_domain) // mean_data_values
+        upper_limit = int((self.data_size - NFFT / 2 + 1 + NFFT - noverlap) // (NFFT - noverlap))
 
         # Cut out all frequencies below 0 and corresponding fourier data
         # positive_indices = self.freq_domain >= 0
@@ -115,11 +125,10 @@ class Gabor:
 
         # Calculate the spectrum
         t = np.linspace(0, self.song_length_seconds, self.data_size)
-        # TODO: why 8 and 11000?
-        for i in range(0, 48):
-            gaussian = 11000 * np.exp(-2 * np.power(t - i/6, 2))
+        for i in range(0, upper_limit):
+            window = gaussian(t, i * (NFFT - noverlap) / Fs, 0.1)
 
-            gaussian_filtered = self.data * gaussian
+            gaussian_filtered = self.data * window
 
             fourier_data = abs(rfft(gaussian_filtered))
 
@@ -138,12 +147,10 @@ class Gabor:
         freq = np.linspace(0, np.max(self.freq_domain), mean_data_values)
 
         # Calculate time points
-        NFFT = 10000
-        noverlap = 500
-        Fs = self.samplerate
+
         t = np.arange(NFFT/2, self.data_size - NFFT/2+1, NFFT - noverlap) / Fs
 
-        # upper_limit = (self.data_size - NFFT/2+1 + NFFT-noverlap)//(NFFT - noverlap)
+
         # np.linspace(0, self.song_length_seconds, 48)
 
         return spectrum, freq, t
@@ -270,13 +277,13 @@ class Gabor:
 
 if __name__ == '__main__':
     gabor = Gabor()
-    gabor.read_wav('../input/Export1/Taka_a_E2_5.wav')
-    # gabor.read_wav('../input/hbd.wav')
+    # gabor.read_wav('../input/Export1/Taka_a_E2_5.wav')
+    gabor.read_wav('../input/hbd.wav')
     # gabor.own_fourier_transform()
     # gabor.fourier_transform()
     # gabor.plot_sound()
-    # gabor.gabor_transform()
-    gabor.gabor_own_plot()
+    gabor.gabor_transform()
+    # gabor.gabor_own_plot()
     gabor.own_gabor_transform()
     # gabor.gabor_transform()
 
