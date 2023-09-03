@@ -9,7 +9,6 @@ class SoundTransform:
     """
     This class is used to read in a sound file and to plot the sound file as diagram with amplitude over time.
     """
-
     def __init__(self):
         self.data = None
         self.samplerate = None

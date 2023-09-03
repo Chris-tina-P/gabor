@@ -13,7 +13,6 @@ class Fourier(SoundTransform):
     """
     This class is used to compute and plot the Fourier transform of a sound file.
     """
-
     def read_wav(self, name) -> None:
         """
         Reads the wav file and computes the contained frequencies.

@@ -72,7 +72,6 @@ class OwnGabor(Gabor):
     """
     This class is used to compute and plot the gabor transform of a sound file with own methods.
     """
-
     def __int__(self, own_fourier: bool = False):
         super().__init__(own_fourier=own_fourier)
 
