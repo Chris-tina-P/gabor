@@ -120,7 +120,7 @@ class OwnFourier(Fourier):
         :return: None
         """
         plt.xlim([0, x_lim])
-        plt.xlabel("Frequency (Hz)")
+        plt.xlabel("Frequenz (Hz)")
         plt.ylabel("Amplitude")
         plt.plot(frequencies, fourier_data)
         plt.show()
@@ -149,7 +149,7 @@ class NpFourier(Fourier):
         :return: None
         """
         plt.xlim([0, x_lim])
-        plt.xlabel("Frequency (Hz)")
+        plt.xlabel("Frequenz (Hz)")
         plt.ylabel("Amplitude")
         plt.plot(frequencies, fourier_data)
         plt.show()

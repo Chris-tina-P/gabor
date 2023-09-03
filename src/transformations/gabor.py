@@ -15,6 +15,7 @@ def gaussian(x, mu, sig):
             1.0 / (np.sqrt(2.0 * np.pi) * sig) * np.exp(-np.power((x - mu) / sig, 2.0) / 2)
     )
 
+
 class Gabor(SoundTransform):
     def __init__(self, own_fourier: bool = False):
         super().__init__()
@@ -115,9 +116,9 @@ class OwnGabor(Gabor):
         plt.ylim([0, y_lim])
         plt.ylabel('Frequenz (Hz)')
         plt.xlabel('Zeit (s)')
-        plt.title('Spektrogramm aus FFT-Werten')
         plt.colorbar(label='Leistungspegel (dB)')
         plt.show()
+
 
 class NpGabor(Gabor):
     def transform(self, mean_data_values=5001, NFFT=10000, noverlap=500) -> (List[ndarray], ndarray, ndarray):
@@ -131,7 +132,6 @@ class NpGabor(Gabor):
         plt.ylim([0, y_lim])
         plt.ylabel('Frequenz (Hz)')
         plt.xlabel('Zeit (s)')
-        plt.title('Spektrogramm aus FFT-Werten')
         plt.colorbar(label='Leistungspegel (dB)')
         plt.show()
 
@@ -151,6 +151,6 @@ class NpGabor(Gabor):
         plt.ylim([0, y_lim])
         plt.xlim([0, x_lim])
         plt.colorbar()
-        plt.xlabel("Time (seconds)")
-        plt.ylabel("Frequency (Hz)")
+        plt.xlabel("Zeit (s)")
+        plt.ylabel("Frequenz (Hz)")
         plt.show()

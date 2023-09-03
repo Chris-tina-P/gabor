@@ -26,3 +26,12 @@ if __name__ == '__main__':
 
     ownGabor = OwnGabor()
     ownGabor.process('../input/Export1/Klavier_A_leicht.wav')
+
+    npGabor = NpGabor()
+    npGabor.process('../input/Export1/Klavier_A_leicht.wav')
+
+    fourier = OwnFourier()
+    fourier.process('../input/Export1/Klavier_A_leicht.wav')
+
+    fourier = NpFourier()
+    fourier.process('../input/Export1/Klavier_A_leicht.wav')
