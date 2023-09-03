@@ -3,8 +3,6 @@ from src.transformations.gabor import OwnGabor, NpGabor
 
 # TODO: Remove commented out src that is unused
 # TODO: Add and comment method parameters
-
-# TODO: Rename class, maybe split into fourier and transformations class
 # TODO: Remove unused methods
 
 if __name__ == '__main__':

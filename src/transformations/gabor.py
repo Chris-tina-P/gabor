@@ -10,13 +10,23 @@ from src.transformations.fourier import OwnFourier
 from src.transformations.sound_transform import SoundTransform
 
 
-def gaussian(x, mu, sig):
+def gaussian(x, mu, sig) -> float:
+    """
+    Gaussian function
+    :param x: variable of the function
+    :param mu: center of the peak
+    :param sig: standard deviation
+    :return: value of the function at x
+    """
     return (
             1.0 / (np.sqrt(2.0 * np.pi) * sig) * np.exp(-np.power((x - mu) / sig, 2.0) / 2)
     )
 
 
 class Gabor(SoundTransform):
+    """
+    This class is used to compute and plot the gabor transform of a sound file.
+    """
     def __init__(self, own_fourier: bool = False):
         super().__init__()
         self.data = None
@@ -30,7 +40,12 @@ class Gabor(SoundTransform):
         else:
             self.fourier = rfft
 
-    def read_wav(self, name):
+    def read_wav(self, name) -> None:
+        """
+        Reads the wav file and computes the contained frequencies.
+        :param name: name of the wav file
+        :return: None
+        """
         super().read_wav(name)
         self.frequencies = np.fft.rfftfreq(self.data_size, d=1. / self.samplerate)
 
@@ -54,16 +69,20 @@ class Gabor(SoundTransform):
 
 
 class OwnGabor(Gabor):
+    """
+    This class is used to compute and plot the gabor transform of a sound file with own methods.
+    """
 
     def __int__(self, own_fourier: bool = False):
         super().__init__(own_fourier=own_fourier)
 
-    # TODO: Add params to method signature
     def transform(self, mean_data_values=5001, NFFT=10000, noverlap=500) -> (List[ndarray], ndarray, ndarray):
         """
         This method computes und plots several fourier transforms of the loaded sound file
-        TODO: plot spectrogram out of the fourier transforms
-
+        :param mean_data_values: The number of data values to be averaged
+        :param NFFT: The number of data points used in each block for the FFT
+        :param noverlap: The number of points of overlap between blocks
+        :return: spectrum, frequencies and time points for plotting a spectrogram
         """
         fft_to_use = self.fourier
 
@@ -111,8 +130,16 @@ class OwnGabor(Gabor):
         return spectrum, freq, t
 
     def plot(self, spectrum, frequencies, t, y_lim: int = 1000) -> None:
-        plt.pcolormesh(t, frequencies, spectrum, shading='nearest', cmap='jet_r',
-                       norm='log')  # shading='gouraud' makes diagram smoother
+        """
+        This method plots the spectrogram of the sound file.
+        :param spectrum: color spectrum
+        :param frequencies: y-axis
+        :param t: x-axis
+        :param y_lim: limit for the y-axis
+        :return: None
+        """
+        # shading='gouraud' makes diagram smoother
+        plt.pcolormesh(t, frequencies, spectrum, shading='nearest', cmap='jet_r', norm='log')
         plt.ylim([0, y_lim])
         plt.ylabel('Frequenz (Hz)')
         plt.xlabel('Zeit (s)')
@@ -121,14 +148,32 @@ class OwnGabor(Gabor):
 
 
 class NpGabor(Gabor):
+    """
+    This class is used to compute and plot the gabor transform of a sound file with given numpy functions.
+    """
     def transform(self, mean_data_values=5001, NFFT=10000, noverlap=500) -> (List[ndarray], ndarray, ndarray):
+        """
+        This method computes und plots several fourier transforms of the loaded sound file
+        :param mean_data_values: The number of data values to be averaged
+        :param NFFT: The number of data points used in each block for the FFT
+        :param noverlap: The number of points of overlap between blocks
+        :return: spectrum, frequencies and time points for plotting a spectrogram
+        """
         spectrum, freqs, t, _ = plt.specgram(self.data, NFFT=NFFT, Fs=self.samplerate, noverlap=noverlap,
                                              cmap='jet_r')
         return spectrum, freqs, t
 
     def plot(self, spectrum, frequencies, t, y_lim: int = 1000) -> None:
-        plt.pcolormesh(t, frequencies, spectrum, cmap='jet_r',
-                       norm='log')  # shading='gouraud' makes diagram smoother
+        """
+        This method plots the spectrogram of the sound file.
+        :param spectrum: color spectrum
+        :param frequencies: y-axis
+        :param t: x-axis
+        :param y_lim: limit for the y-axis
+        :return: None
+        """
+        # shading='gouraud' makes diagram smoother
+        plt.pcolormesh(t, frequencies, spectrum, cmap='jet_r', norm='log')
         plt.ylim([0, y_lim])
         plt.ylabel('Frequenz (Hz)')
         plt.xlabel('Zeit (s)')
@@ -137,7 +182,7 @@ class NpGabor(Gabor):
 
     def specgram(self, nfft: int = 10000, noverlap: int = 500, x_lim: int = 0, y_lim: int = 1000) -> None:
         """
-        This method plots the spectrogram of the loaded sound file.
+        This method computes and plots the spectrogram of the loaded sound file with given method specgram.
         :param nfft: The number of points for the fft.
         :param noverlap: The number of points for the overlap.
         :param x_lim: The time limit (x limit) of the plot. If smaller or equal 0, the whole song is plotted.

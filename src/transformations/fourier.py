@@ -10,8 +10,16 @@ from src.transformations.sound_transform import SoundTransform
 
 
 class Fourier(SoundTransform):
+    """
+    This class is used to compute and plot the Fourier transform of a sound file.
+    """
 
-    def read_wav(self, name):
+    def read_wav(self, name) -> None:
+        """
+        Reads the wav file and computes the contained frequencies.
+        :param name: name of the wav file
+        :return: None
+        """
         super().read_wav(name)
         self.frequencies = np.fft.rfftfreq(self.data_size, d=1. / self.samplerate)
 
@@ -25,7 +33,7 @@ class Fourier(SoundTransform):
 
     def process(self, filename: str) -> None:
         """
-        Loads the file, processes and plots the result.
+        Loads the file, computes fourier transform and plots the result.
         :param filename: The name of the file.
         :return: None
         """
@@ -35,28 +43,27 @@ class Fourier(SoundTransform):
 
 
 class OwnFourier(Fourier):
+    """
+    This class is used to compute and plot the Fourier transform of a sound file with own methods.
+    """
     def transform(self, data_part=None) -> (ndarray, ndarray):
         """
         This method computes and plots the Fourier transform of the loaded sound file with own fft.
-        BUT DIFFERENT RESULTS THAN WITH SCIPY FFT!
-        :return: None
+        TODO: Different results than with scipy fft.
+        :return: The transformed data and the frequencies
         """
         # if data_part is None:
         #     data_part = self.data
 
         # fourier transform
         fourier_data = abs(self.fft(self.data))
-
         frequencies = np.fft.fftfreq(self.data_size, d=1. / self.samplerate)
-
-        # plotting spectral content of sound wave
-        # self.plot(fourier_data, frequencies)
 
         return fourier_data, frequencies
 
     def slow_dft(self, data) -> ndarray:
         """
-        Compute the discrete Fourier Transform of the 1D array x
+        Compute the discrete Fourier Transform of the 1D array data
         :param data: The data to transform
         :return: The transformed data
         """
@@ -71,7 +78,7 @@ class OwnFourier(Fourier):
         """
         This method preprocesses the data for the FFT by adding zeros to the end of the data array.
         :param data: The data to preprocess
-        :return: The preprocessed data, ready for the FFT
+        :return: The preprocessed data ready for the FFT
         """
         logarithm = int(math.log(len(data), 2))
         next_power_of_two = 2 ** (logarithm + 1)
@@ -127,11 +134,13 @@ class OwnFourier(Fourier):
 
 
 class NpFourier(Fourier):
-
+    """
+    This class is used to compute and plot the Fourier transform of a sound file with numpy fft.
+    """
     def transform(self, data_part=None) -> (ndarray, ndarray):
         """
         This method computes and plots the Fourier transform of the loaded sound file with predefined fft.
-        :return: None
+        :return: The transformed data and the frequencies
         """
         if data_part is None:
             data_part = self.data
@@ -142,7 +151,7 @@ class NpFourier(Fourier):
 
     def plot(self, fourier_data, frequencies, x_lim: int = 1000) -> None:
         """
-        This method plots the Fourier transform of the transformed data.
+        This method plots the Fourier transformed data.
         :param x_lim: The frequency limit of the plot (x limit)
         :param frequencies: The frequencies of the transformed data.
         :param fourier_data: The transformed data to plot.

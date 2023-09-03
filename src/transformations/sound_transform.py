@@ -6,6 +6,9 @@ from scipy.io import wavfile
 
 
 class SoundTransform:
+    """
+    This class is used to read in a sound file and to plot the sound file as diagram with amplitude over time.
+    """
 
     def __init__(self):
         self.data = None
@@ -33,9 +36,9 @@ class SoundTransform:
         self.song_length_seconds = self.data_size / self.samplerate
 
         # print sound metadata
-        print("Data size:", self.data_size)
-        print("Sample rate:", self.samplerate)
-        print("Song length (seconds):", self.song_length_seconds, "seconds")
+        print("Datengröße:", self.data_size)
+        print("Sample-Rate:", self.samplerate)
+        print("Songlänge:", self.song_length_seconds, "s")
 
     def plot_wav(self) -> None:
         """
@@ -47,7 +50,7 @@ class SoundTransform:
 
         # plot sound file and add labels
         plt.plot(time, self.data)
-        plt.xlabel("Time [s]")
+        plt.xlabel("Zeit [s]")
         plt.ylabel("Amplitude")
         plt.show()
 
