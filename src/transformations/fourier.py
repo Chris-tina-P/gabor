@@ -107,6 +107,7 @@ class OwnFourier(Fourier):
                                    x_even + factor[n // 2:] * x_odd])
 
     def fft(self, data) -> ndarray:
+        # TODO: understand Cooley-Tukey and why frequencies are not correct
         """
         A recursive implementation of the 1D Cooley-Tukey FFT
         :param data: The data to transform

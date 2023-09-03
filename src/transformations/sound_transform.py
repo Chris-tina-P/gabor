@@ -16,7 +16,7 @@ class SoundTransform:
         self.song_length_seconds = None
         self.frequencies = None
 
-    def read_wav(self, name):
+    def read_wav(self, name: str):
         """
         This method reads in a sound file and prints the sound metadata.
         TODO: Warning with own wav files
