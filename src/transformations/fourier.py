@@ -27,7 +27,7 @@ class Fourier(SoundTransform):
         pass
 
     @abstractmethod
-    def plot(self, fourier_data, frequencies, x_lim: int = 1000) -> None:
+    def plot(self, fourier_data, freq, x_lim: int = 1000) -> None:
         pass
 
     def process(self, filename: str) -> None:
@@ -118,18 +118,18 @@ class OwnFourier(Fourier):
         processed = self.recursive_fft(x)
         return processed[:n_original]
 
-    def plot(self, fourier_data, frequencies, x_lim: int = 1000) -> None:
+    def plot(self, fourier_data, freq, x_lim: int = 1000) -> None:
         """
         This method plots the Fourier transform of the transformed data.
         :param x_lim: The frequency limit of the plot (x limit)
-        :param frequencies: The frequencies of the transformed data.
+        :param freq: The frequencies of the transformed data.
         :param fourier_data: The transformed data to plot.
         :return: None
         """
         plt.xlim([0, x_lim])
         plt.xlabel("Frequenz (Hz)")
         plt.ylabel("Amplitude")
-        plt.plot(frequencies, fourier_data)
+        plt.plot(freq, fourier_data)
         plt.show()
 
 
@@ -146,18 +146,18 @@ class NpFourier(Fourier):
         fourier_data = np.abs(rfft(self.data))
         return fourier_data, self.frequencies
 
-    def plot(self, fourier_data, frequencies, x_lim: int = 1000) -> None:
+    def plot(self, fourier_data, freq, x_lim: int = 1000) -> None:
         """
         This method plots the Fourier transformed data.
         :param x_lim: The frequency limit of the plot (x limit)
-        :param frequencies: The frequencies of the transformed data.
+        :param freq: The frequencies of the transformed data.
         :param fourier_data: The transformed data to plot.
         :return: None
         """
         plt.xlim([0, x_lim])
         plt.xlabel("Frequenz (Hz)")
         plt.ylabel("Amplitude")
-        plt.plot(frequencies, fourier_data)
+        plt.plot(freq, fourier_data)
         plt.show()
 
 
