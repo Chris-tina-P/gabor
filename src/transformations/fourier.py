@@ -13,7 +13,7 @@ class Fourier(SoundTransform):
     """
     This class is used to compute and plot the Fourier transform of a sound file.
     """
-    def read_wav(self, name) -> None:
+    def read_wav(self, name: str) -> None:
         """
         Reads the wav file and computes the contained frequencies.
         :param name: name of the wav file
@@ -45,7 +45,7 @@ class OwnFourier(Fourier):
     """
     This class is used to compute and plot the Fourier transform of a sound file with own methods.
     """
-    def transform(self, data_part=None) -> (ndarray, ndarray):
+    def transform(self) -> (ndarray, ndarray):
         """
         This method computes and plots the Fourier transform of the loaded sound file with own fft.
         TODO: Different results than with scipy fft.
@@ -137,16 +137,13 @@ class NpFourier(Fourier):
     """
     This class is used to compute and plot the Fourier transform of a sound file with numpy fft.
     """
-    def transform(self, data_part=None) -> (ndarray, ndarray):
+    def transform(self) -> (ndarray, ndarray):
         """
         This method computes and plots the Fourier transform of the loaded sound file with predefined fft.
         :return: The transformed data and the frequencies
         """
-        if data_part is None:
-            data_part = self.data
-
         # fourier transform
-        fourier_data = np.abs(rfft(data_part))
+        fourier_data = np.abs(rfft(self.data))
         return fourier_data, self.frequencies
 
     def plot(self, fourier_data, frequencies, x_lim: int = 1000) -> None:

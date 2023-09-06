@@ -10,17 +10,23 @@ from src.transformations.fourier import OwnFourier
 from src.transformations.sound_transform import SoundTransform
 
 
-def gaussian(x, mu, sig) -> float:
+class Gaussian:
     """
-    Gaussian function
-    :param x: variable of the function
-    :param mu: center of the peak
-    :param sig: standard deviation
-    :return: value of the function at x
+    This class is used to compute a gaussian function.
     """
-    return (
-            1.0 / (np.sqrt(2.0 * np.pi) * sig) * np.exp(-np.power((x - mu) / sig, 2.0) / 2)
-    )
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def gaussian(x, mu, sig) -> float:
+        """
+        Gaussian function
+        :param x: variable of the function
+        :param mu: center of the peak
+        :param sig: standard deviation
+        :return: value of the function at x
+        """
+        return 1.0 / (np.sqrt(2.0 * np.pi) * sig) * np.exp(-np.power((x - mu) / sig, 2.0) / 2)
 
 
 class Gabor(SoundTransform):
@@ -40,7 +46,7 @@ class Gabor(SoundTransform):
         else:
             self.fourier = rfft
 
-    def read_wav(self, name) -> None:
+    def read_wav(self, name: str) -> None:
         """
         Reads the wav file and computes the contained frequencies.
         :param name: name of the wav file
@@ -50,7 +56,7 @@ class Gabor(SoundTransform):
         self.frequencies = np.fft.rfftfreq(self.data_size, d=1. / self.samplerate)
 
     @abstractmethod
-    def transform(self, mean_data_values=5001, NFFT=10000, noverlap=500) -> (List[ndarray], ndarray, ndarray):
+    def transform(self, mean_data_values: int = 5001, NFFT: int = 10000, noverlap: int = 500) -> (List[ndarray], ndarray, ndarray):
         pass
 
     @abstractmethod
@@ -75,7 +81,7 @@ class OwnGabor(Gabor):
     def __int__(self, own_fourier: bool = False):
         super().__init__(own_fourier=own_fourier)
 
-    def transform(self, mean_data_values=5001, NFFT=10000, noverlap=500) -> (List[ndarray], ndarray, ndarray):
+    def transform(self, mean_data_values: int = 5001, NFFT: int = 10000, noverlap: int = 500) -> (List[ndarray], ndarray, ndarray):
         """
         This method computes und plots several fourier transforms of the loaded sound file
         :param mean_data_values: The number of data values to be averaged
@@ -99,7 +105,7 @@ class OwnGabor(Gabor):
         # Calculate the spectrum
         t = np.linspace(0, self.song_length_seconds, self.data_size)
         for i in range(0, upper_limit):
-            window = gaussian(t, i * (NFFT - noverlap) / Fs, 0.1)
+            window = Gaussian.gaussian(t, i * (NFFT - noverlap) / Fs, 0.1)
 
             gaussian_filtered = self.data * window
 
@@ -142,7 +148,7 @@ class OwnGabor(Gabor):
         plt.ylim([0, y_lim])
         plt.ylabel('Frequenz (Hz)')
         plt.xlabel('Zeit (s)')
-        plt.colorbar(label='Leistungspegel (dB)')
+        # plt.colorbar(label='Leistungspegel (dB)')
         plt.show()
 
 
@@ -150,7 +156,7 @@ class NpGabor(Gabor):
     """
     This class is used to compute and plot the gabor transform of a sound file with given numpy functions.
     """
-    def transform(self, mean_data_values=5001, NFFT=10000, noverlap=500) -> (List[ndarray], ndarray, ndarray):
+    def transform(self, mean_data_values: int = 5001, NFFT: int = 10000, noverlap: int = 500) -> (List[ndarray], ndarray, ndarray):
         """
         This method computes und plots several fourier transforms of the loaded sound file
         :param mean_data_values: The number of data values to be averaged
@@ -176,7 +182,7 @@ class NpGabor(Gabor):
         plt.ylim([0, y_lim])
         plt.ylabel('Frequenz (Hz)')
         plt.xlabel('Zeit (s)')
-        plt.colorbar(label='Leistungspegel (dB)')
+        # plt.colorbar(label='Leistungspegel (dB)')
         plt.show()
 
     def specgram(self, nfft: int = 10000, noverlap: int = 500, x_lim: int = 0, y_lim: int = 1000) -> None:
@@ -194,7 +200,7 @@ class NpGabor(Gabor):
         plt.specgram(self.data, NFFT=nfft, Fs=self.samplerate, noverlap=noverlap, cmap='jet_r')
         plt.ylim([0, y_lim])
         plt.xlim([0, x_lim])
-        plt.colorbar()
+        # plt.colorbar()
         plt.xlabel("Zeit (s)")
         plt.ylabel("Frequenz (Hz)")
         plt.show()
