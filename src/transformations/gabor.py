@@ -42,7 +42,7 @@ class Gabor(SoundTransform):
         self.frequencies = None
 
         if own_fourier:
-            self.fourier = OwnFourier().fft
+            self.fourier = OwnFourier()._fft
         else:
             self.fourier = rfft
 
@@ -84,6 +84,7 @@ class OwnGabor(Gabor):
 
     def transform(self, num_data: int = 5001, nfft: int = 10000, noverlap: int = 500) -> (List[ndarray], ndarray, ndarray):
         """
+        TODO: PARAMS nfft and noverlap right?
         This method computes several fourier transforms of the loaded sound file
         :param num_data: The number of data values to be averaged
         :param nfft: The number of data points used in each block for the FFT

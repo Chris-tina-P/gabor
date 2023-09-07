@@ -51,12 +51,12 @@ class OwnFourier(Fourier):
         TODO: Different results than with scipy fft.
         :return: The transformed data and the frequencies
         """
-        fourier_data = abs(self.fft(self.data))
+        fourier_data = abs(self._fft(self.data))
         frequencies = np.fft.fftfreq(self.data_size, d=1. / self.samplerate)
 
         return fourier_data, frequencies
 
-    def slow_dft(self, data) -> ndarray:
+    def _slow_dft(self, data) -> ndarray:
         """
         Compute the discrete Fourier Transform of the 1D array data
         :param data: The data to transform
@@ -69,7 +69,7 @@ class OwnFourier(Fourier):
         M = np.exp(-2j * np.pi * k * n / N)
         return np.dot(M, x)
 
-    def preprocess_fft(self, data) -> ndarray:
+    def _preprocess_fft(self, data) -> ndarray:
         """
         This method preprocesses the data for the FFT by adding zeros to the end of the data array.
         :param data: The data to preprocess
@@ -83,7 +83,7 @@ class OwnFourier(Fourier):
 
         return data
 
-    def recursive_fft(self, data) -> ndarray:
+    def _recursive_fft(self, data) -> ndarray:
         """
         This method computes the FFT of the data recursively.
         :param data: The data to transform
@@ -94,15 +94,15 @@ class OwnFourier(Fourier):
 
         cutoff = 32  # cutoff should be optimized
         if n <= cutoff:
-            return self.slow_dft(x)
+            return self._slow_dft(x)
         else:
-            x_even = self.recursive_fft(x[::2])
-            x_odd = self.recursive_fft(x[1::2])
+            x_even = self._recursive_fft(x[::2])
+            x_odd = self._recursive_fft(x[1::2])
             factor = np.exp(-2j * np.pi * np.arange(n) / n)
             return np.concatenate([x_even + factor[:n // 2] * x_odd,
                                    x_even + factor[n // 2:] * x_odd])
 
-    def fft(self, data) -> ndarray:
+    def _fft(self, data) -> ndarray:
         # TODO: understand Cooley-Tukey and why frequencies are not correct
         """
         A recursive implementation of the 1D Cooley-Tukey FFT
@@ -110,8 +110,8 @@ class OwnFourier(Fourier):
         :return: The transformed data
         """
         n_original = len(data)
-        x = self.preprocess_fft(data)
-        processed = self.recursive_fft(x)
+        x = self._preprocess_fft(data)
+        processed = self._recursive_fft(x)
         return processed[:n_original]
 
     def plot(self, fourier_data, freq, x_lim: int = 1000) -> None:
