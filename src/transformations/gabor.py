@@ -84,7 +84,7 @@ class OwnGabor(Gabor):
 
     def transform(self, num_data: int = 5001, nfft: int = 10000, noverlap: int = 500) -> (List[ndarray], ndarray, ndarray):
         """
-        This method computes und plots several fourier transforms of the loaded sound file
+        This method computes several fourier transforms of the loaded sound file
         :param num_data: The number of data values to be averaged
         :param nfft: The number of data points used in each block for the FFT
         :param noverlap: The number of points of overlap between blocks
@@ -96,12 +96,6 @@ class OwnGabor(Gabor):
         Fs = self.samplerate
         div = len(self.frequencies) // num_data
         upper_limit = int((self.data_size - nfft / 2 + 1 + nfft - noverlap) // (nfft - noverlap))
-
-        # Cut out all frequencies below 0 and corresponding fourier data
-        # positive_indices = self.freq_domain >= 0
-        # self.freq_domain = self.freq_domain[positive_indices]
-        # self.data = self.data[positive_indices]
-        # self.data_size = self.data.shape[0]
 
         # Calculate the spectrum
         t = np.linspace(0, self.song_length_seconds, self.data_size)
