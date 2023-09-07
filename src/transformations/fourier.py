@@ -51,10 +51,6 @@ class OwnFourier(Fourier):
         TODO: Different results than with scipy fft.
         :return: The transformed data and the frequencies
         """
-        # if data_part is None:
-        #     data_part = self.data
-
-        # fourier transform
         fourier_data = abs(self.fft(self.data))
         frequencies = np.fft.fftfreq(self.data_size, d=1. / self.samplerate)
 
