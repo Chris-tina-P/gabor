@@ -52,7 +52,7 @@ class OwnFourier(Fourier):
         :return: The transformed data and the frequencies
         """
         fourier_data = abs(self._fft(self.data))
-        frequencies = np.fft.fftfreq(self.data_size, d=1. / self.samplerate)
+        frequencies = np.fft.fftfreq(len(fourier_data), d=1. / self.samplerate)
 
         return fourier_data, frequencies
 
@@ -112,7 +112,7 @@ class OwnFourier(Fourier):
         n_original = len(data)
         x = self._preprocess_fft(data)
         processed = self._recursive_fft(x)
-        return processed[:n_original]
+        return processed
 
     def plot(self, fourier_data, freq, x_lim: int = 1000) -> None:
         """
