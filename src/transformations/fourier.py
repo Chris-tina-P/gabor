@@ -54,6 +54,10 @@ class OwnFourier(Fourier):
         fourier_data = abs(self._fft(self.data))
         frequencies = np.fft.fftfreq(len(fourier_data), d=1. / self.samplerate)
 
+        # Remove negative frequencies
+        fourier_data = fourier_data[:len(fourier_data)//2]
+        frequencies = frequencies[:len(frequencies)//2]
+
         return fourier_data, frequencies
 
     def _slow_dft(self, data) -> ndarray:
@@ -109,7 +113,6 @@ class OwnFourier(Fourier):
         :param data: The data to transform
         :return: The transformed data
         """
-        n_original = len(data)
         x = self._preprocess_fft(data)
         processed = self._recursive_fft(x)
         return processed
