@@ -35,15 +35,14 @@ def _set_up_arg_parser() -> ArgumentParser:
     wav_parser = sub_parser.add_parser(str(Tasks.WAV))
     fourier_parser = sub_parser.add_parser(str(Tasks.FOURIER))
     gabor_parser = sub_parser.add_parser(str(Tasks.GABOR))
-    specgram_parser = sub_parser.add_parser(str(Tasks.GABOR))
+    specgram_parser = sub_parser.add_parser(str(Tasks.SPECGRAM))
 
     arg_parser.add_argument("input", type=Path, help="Path to the input file")
 
-    fourier_parser.add_argument("--own", required=False, type=bool, default=False, help="Whether to use the own implementation or the library implementation")
-    gabor_parser.add_argument("--own", required=False, type=bool, default=False, help="Whether to use the own implementation or the library implementation")
-
+    fourier_parser.add_argument("--own", action="store_true", required=False, default=False, help="Whether to use the own implementation or the library implementation")
     fourier_parser.add_argument("--xlim", required=False, type=int, default=1000, help="The x limit for the plot")
 
+    gabor_parser.add_argument("--own", action="store_true", required=False, default=False, help="Whether to use the own implementation or the library implementation")
     gabor_parser.add_argument("--num_data", required=False, type=int, default=5001, help="The number of data values to be averaged")
     gabor_parser.add_argument("--nfft", required=False, type=int, default=10000, help="The number of data points used in each block for the FFT")
     gabor_parser.add_argument("--noverlap", required=False, type=int, default=500, help="The number of points of overlap between blocks")
@@ -51,8 +50,8 @@ def _set_up_arg_parser() -> ArgumentParser:
 
     specgram_parser.add_argument("--nfft", required=False, type=int, default=10000, help="The number of data points used in each block for the FFT")
     specgram_parser.add_argument("--noverlap", required=False, type=int, default=500, help="The number of points of overlap between blocks")
-    specgram_parser.add_argument("--xlim", required=False, type=int, default=1000, help="The x limit for the plot")
-    specgram_parser.add_argument("--ylim", required=False, type=int, default=500, help="The y limit for the plot")
+    specgram_parser.add_argument("--xlim", required=False, type=int, default=0, help="The x limit for the plot")
+    specgram_parser.add_argument("--ylim", required=False, type=int, default=1000, help="The y limit for the plot")
 
     return arg_parser
 
