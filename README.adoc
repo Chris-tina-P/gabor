@@ -1,0 +1,112 @@
+= Command-Line Tool for Signal Processing
+
+:author: Christina Praml
+:date: September 10, 2023
+:email: your.email@example.com
+
+== Introduction
+
+This is a command-line tool built with Python 3.8 that provides various signal processing functionalities including WAV file plotting, Fourier analysis, Gabor transformation, and spectrogram generation. The tool uses a virtual environment for dependency management, and you can install the required dependencies by using the provided `requirements.txt` file.
+
+== Installation
+
+Before you begin, make sure you have Python 3.8 (or later) installed on your system.
+
+=== Create a Virtual Environment
+
+It's recommended to create a virtual environment for this project to manage dependencies. You can create one using the following commands:
+
+[source,shell]
+python3.8 -m venv venv
+source venv/bin/activate # On Windows, use 'venv\Scripts\activate'
+
+
+=== Install Dependencies
+
+Once the virtual environment is activated, you can install the required dependencies using pip:
+
+[source,shell]
+pip install -r requirements.txt
+
+
+== Usage
+
+The tool provides the following subcommands:
+
+- WAV: Plots .wav files
+- FOURIER: Performs Fourier analysis
+- GABOR: Performs Gabor transformation
+- SPECGRAM: Uses python's specgram function to generate a spectrogram
+
+Each of the subcommands plots the output as a graph.
+
+=== WAV Subcommand
+
+Use this subcommand for plotting .wav files.
+
+Usage:
+[source,shell]
+python argparser-example.py WAV [-h] input
+
+- input: Path to the input file
+- h: Shows a help message
+
+Example usage:
+[source,shell]
+python argparser-example.py WAV input.wav
+
+=== FOURIER Subcommand
+
+This subcommand performs Fourier analysis on the input data and plot the output as a graph.
+
+Usage:
+[source,shell]
+python argparser-example.py FOURIER [-h] [--own] [--xlim XLIM] input
+
+- input: Path to the input file
+- h: Show the help message and exit
+- own: Whether to use the own implementation or the library implementation
+- xlim: The x limit for the plot
+
+Example usage:
+[source,shell]
+python argparser-example.py FOURIER --own --xlim=100 input.wav
+
+=== GABOR Subcommand
+
+This subcommand applies the Gabor transformation to the input data and plots the output as a spectrogram.
+
+Usage:
+[source,shell]
+python argparser-example.py GABOR [-h] [--own] [--num_data NUM_DATA] [--nfft NFFT] [--noverlap NOVERLAP] [--ylim YLIM] input
+
+- input: Path to the input file
+- h: Show the help message and exit
+- own: Whether to use the own implementation or the library implementation
+- num_data: The number of data values to be averaged
+- nfft NFFT: The number of data points used in each block for the FFT
+- noverlap: The number of points of overlap between blocks
+- ylim: The y limit for the plot
+
+Example usage:
+[source,shell]
+python argparser-example.py GABOR --own --num_data 100 --nfft 256 --noverlap 128 --ylim 10 input.wav
+
+=== SPECGRAM Subcommand
+
+This subcommand generates a spectrogram from the input data.
+
+Usage:
+[source,shell]
+python argparser-example.py SPECGRAM [-h] [--nfft NFFT] [--noverlap NOVERLAP] [--xlim XLIM] [--ylim YLIM] input
+
+- input: Path to the input file
+- h: Show the help message and exit
+- nfft: The number of data points used in each block for the FFT
+- noverlap: The number of points of overlap between blocks
+- xlim: The x limit for the plot
+- ylim: The y limit for the plot
+
+Example usage:
+[source,shell]
+python argparser-example.py SPECGRAM --nfft 256 --noverlap 128 --xlim 100 --ylim 10 input.txt
