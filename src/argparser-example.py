@@ -32,12 +32,15 @@ def _set_up_arg_parser() -> ArgumentParser:
     arg_parser = ArgumentParser()
     sub_parser = arg_parser.add_subparsers(dest="command", required=True)
 
+    sub_parsers = []
     wav_parser = sub_parser.add_parser(str(Tasks.WAV))
+    sub_parsers.append(wav_parser)
     fourier_parser = sub_parser.add_parser(str(Tasks.FOURIER))
+    sub_parsers.append(fourier_parser)
     gabor_parser = sub_parser.add_parser(str(Tasks.GABOR))
+    sub_parsers.append(gabor_parser)
     specgram_parser = sub_parser.add_parser(str(Tasks.SPECGRAM))
-
-    arg_parser.add_argument("input", type=Path, help="Path to the input file")
+    sub_parsers.append(specgram_parser)
 
     fourier_parser.add_argument("--own", action="store_true", required=False, default=False, help="Whether to use the own implementation or the library implementation")
     fourier_parser.add_argument("--xlim", required=False, type=int, default=1000, help="The x limit for the plot")
@@ -52,6 +55,9 @@ def _set_up_arg_parser() -> ArgumentParser:
     specgram_parser.add_argument("--noverlap", required=False, type=int, default=500, help="The number of points of overlap between blocks")
     specgram_parser.add_argument("--xlim", required=False, type=int, default=0, help="The x limit for the plot")
     specgram_parser.add_argument("--ylim", required=False, type=int, default=1000, help="The y limit for the plot")
+
+    for parser in sub_parsers:
+        parser.add_argument("input", type=Path, help="Path to the input file")
 
     return arg_parser
 
