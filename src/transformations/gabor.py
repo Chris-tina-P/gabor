@@ -7,8 +7,8 @@ from numpy import ndarray
 from numpy.fft import rfft
 from scipy.fft import fft
 
-from src.transformations.fourier import OwnFourier
-from src.transformations.sound_transform import SoundTransform
+from .fourier import OwnFourier
+from .sound_transform import SoundTransform
 
 
 class Gaussian:
@@ -85,7 +85,7 @@ class OwnGabor(Gabor):
 
     def transform(self, num_data: int = 5001, nfft: int = 10000, noverlap: int = 500) -> (List[ndarray], ndarray, ndarray):
         """
-        TODO: nfft and noverlap can be optimized
+        TODO: change gaussian window?
         This method computes several fourier transforms of the loaded sound file
         :param num_data: The number of data values to be averaged
         :param nfft: The number of data points used in each block for the FFT

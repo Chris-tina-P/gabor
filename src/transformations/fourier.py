@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 from numpy import ndarray
 from numpy.fft import rfft
 
-from src.transformations.sound_transform import SoundTransform
+from .sound_transform import SoundTransform
 
 
 class Fourier(SoundTransform):
