@@ -5,9 +5,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 from numpy import ndarray
 from numpy.fft import rfft
+from scipy.fft import fft
 
-from src.transformations.fourier import OwnFourier
-from src.transformations.sound_transform import SoundTransform
+from .fourier import OwnFourier
+from .sound_transform import SoundTransform
 
 
 class Gaussian:
@@ -44,7 +45,7 @@ class Gabor(SoundTransform):
         if own_fourier:
             self.fourier = OwnFourier()._fft
         else:
-            self.fourier = rfft
+            self.fourier = fft
 
     def read_wav(self, name: str) -> None:
         """
@@ -84,7 +85,7 @@ class OwnGabor(Gabor):
 
     def transform(self, num_data: int = 5001, nfft: int = 10000, noverlap: int = 500) -> (List[ndarray], ndarray, ndarray):
         """
-        TODO: PARAMS nfft and noverlap right?
+        TODO: change gaussian window?
         This method computes several fourier transforms of the loaded sound file
         :param num_data: The number of data values to be averaged
         :param nfft: The number of data points used in each block for the FFT
@@ -119,14 +120,12 @@ class OwnGabor(Gabor):
         spectrum = spectrum.transpose()
 
         # Calculate frequency with the mean
-        # freq = np.linspace(0, np.max(self.freq_domain), mean_data_values)
         freq = np.zeros(num_data)
         for i in range(0, num_data):
             freq[i] = np.mean(self.frequencies[i * div:(i + 1) * div])
 
         # Calculate time points
         t = np.arange(nfft / 2, self.data_size - nfft / 2 + 1, nfft - noverlap) / Fs
-        # np.linspace(0, self.song_length_seconds, 48)
 
         return spectrum, freq, t
 
@@ -144,7 +143,6 @@ class OwnGabor(Gabor):
         plt.ylim([0, y_lim])
         plt.ylabel('Frequenz (Hz)')
         plt.xlabel('Zeit (s)')
-        # plt.colorbar(label='Leistungspegel (dB)')
         plt.show()
 
 
@@ -178,7 +176,6 @@ class NpGabor(Gabor):
         plt.ylim([0, y_lim])
         plt.ylabel('Frequenz (Hz)')
         plt.xlabel('Zeit (s)')
-        # plt.colorbar(label='Leistungspegel (dB)')
         plt.show()
 
     def specgram(self, nfft: int = 10000, noverlap: int = 500, x_lim: int = 0, y_lim: int = 1000) -> None:
@@ -196,7 +193,6 @@ class NpGabor(Gabor):
         plt.specgram(self.data, NFFT=nfft, Fs=self.samplerate, noverlap=noverlap, cmap='jet_r')
         plt.ylim([0, y_lim])
         plt.xlim([0, x_lim])
-        # plt.colorbar()
         plt.xlabel("Zeit (s)")
         plt.ylabel("Frequenz (Hz)")
         plt.show()

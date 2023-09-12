@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 from numpy import ndarray
 from numpy.fft import rfft
 
-from src.transformations.sound_transform import SoundTransform
+from .sound_transform import SoundTransform
 
 
 class Fourier(SoundTransform):
@@ -48,7 +48,6 @@ class OwnFourier(Fourier):
     def transform(self) -> (ndarray, ndarray):
         """
         This method computes and plots the Fourier transform of the loaded sound file with own fft.
-        TODO: Different results than with scipy fft.
         :return: The transformed data and the frequencies
         """
         fourier_data = abs(self._fft(self.data))
@@ -96,7 +95,7 @@ class OwnFourier(Fourier):
         x = np.asarray(data, dtype=float)
         n = x.shape[0]
 
-        cutoff = 32  # cutoff should be optimized
+        cutoff = 32  # cutoff can be optimized
         if n <= cutoff:
             return self._slow_dft(x)
         else:
