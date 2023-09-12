@@ -1,94 +1,136 @@
-from transformations.fourier import NpFourier, OwnFourier
+import sys
+from argparse import ArgumentParser
+from enum import Enum
+from pathlib import Path
+from typing import Any, List
+
+from transformations.fourier import OwnFourier, NpFourier
 from transformations.gabor import OwnGabor, NpGabor
 
-if __name__ == '__main__':
-    # fourier = OwnFourier()
-    # fourier.read_wav('../input/Export1/Klavier_A_leicht.wav')
-    # data, frequencies = fourier.transform()
-    # fourier.plot(data, frequencies)
 
-    # npGabor = NpGabor()
-    # npGabor.read_wav('../input/Export1/Klavier_A_leicht.wav')
-    # spectrum, frequencies, t = npGabor.transform()
-    # npGabor.plot(spectrum, frequencies, t)
-    # npGabor.specgram()
+class TaskNotSupportedException(Exception):
+    """
+    Exception is thrown whenever a task is not supported.
+    """
 
-    # ownGabor = OwnGabor()
-    # ownGabor.read_wav('../input/Export1/Klavier_A_leicht.wav')
-    # spectrum, frequencies, t = ownGabor.transform()
-    # ownGabor.plot(spectrum, frequencies, t)
 
-    # ownGabor = OwnGabor()
-    # ownGabor.process('../input/Export1/Klavier_A_leicht.wav')
+class Tasks(Enum):
+    WAV = "WAV"
+    FOURIER = "FOURIER"
+    GABOR = "GABOR"
+    SPECGRAM = "SPECGRAM"
 
-    # npGabor = NpGabor()
-    # npGabor.process('../input/Export1/Klavier_A_leicht.wav')
-    # npGabor.process('../input/Export1/Klavier_A_Stark.wav')
+    @classmethod
+    def _missing_(cls, value: object) -> Any:
+        raise TaskNotSupportedException(f"{value} is a not supported Task!")
 
-    # npGabor.read_wav('../input/Export1/Klavier_A_leicht.wav')
-    # npGabor.specgram(y_lim=2000)
-    #
-    # npGabor.read_wav('../input/Export1/Klavier_A_Stark.wav')
-    # npGabor.specgram()
+    def __str__(self) -> str:
+        return self.value
 
+
+def _set_up_arg_parser() -> ArgumentParser:
+    arg_parser = ArgumentParser()
+    sub_parser = arg_parser.add_subparsers(dest="command", required=True)
+
+    sub_parsers = []
+    wav_parser = sub_parser.add_parser(str(Tasks.WAV))
+    sub_parsers.append(wav_parser)
+    fourier_parser = sub_parser.add_parser(str(Tasks.FOURIER))
+    sub_parsers.append(fourier_parser)
+    gabor_parser = sub_parser.add_parser(str(Tasks.GABOR))
+    sub_parsers.append(gabor_parser)
+    specgram_parser = sub_parser.add_parser(str(Tasks.SPECGRAM))
+    sub_parsers.append(specgram_parser)
+
+    fourier_parser.add_argument("--own", action="store_true", required=False, default=False, help="Whether to use the own implementation or the library implementation")
+    fourier_parser.add_argument("--xlim", required=False, type=int, default=1000, help="The x limit for the plot")
+
+    gabor_parser.add_argument("--own", action="store_true", required=False, default=False, help="Whether to use the own implementation or the library implementation")
+    gabor_parser.add_argument("--num_data", required=False, type=int, default=5001, help="The number of data values to be averaged")
+    gabor_parser.add_argument("--nfft", required=False, type=int, default=10000, help="The number of data points used in each block for the FFT")
+    gabor_parser.add_argument("--noverlap", required=False, type=int, default=500, help="The number of points of overlap between blocks")
+    gabor_parser.add_argument("--ylim", required=False, type=int, default=500, help="The y limit for the plot")
+
+    specgram_parser.add_argument("--nfft", required=False, type=int, default=10000, help="The number of data points used in each block for the FFT")
+    specgram_parser.add_argument("--noverlap", required=False, type=int, default=500, help="The number of points of overlap between blocks")
+    specgram_parser.add_argument("--xlim", required=False, type=int, default=0, help="The x limit for the plot")
+    specgram_parser.add_argument("--ylim", required=False, type=int, default=1000, help="The y limit for the plot")
+
+    for parser in sub_parsers:
+        parser.add_argument("input", type=Path, help="Path to the input file")
+
+    return arg_parser
+
+
+def _run_wav(parsed_args):
+    input_wav = parsed_args.input
     fourier = OwnFourier()
-    # fourier.process('../input/Export1/Klavier_A_leicht.wav')
-
-    np_fourier = NpFourier()
-    # fourier.process('../input/Export1/Klavier_A_leicht.wav')
-
-    # npGabor.read_wav('../input/Export1/Klavier_A-1.wav')
-    # npGabor.specgram(x_lim=7)
-
-    # fourier = NpFourier()
-    # fourier.process('../input/Export1/Saw_A.wav')
-    # fourier.process('../input/Export1/Sin_A.wav')
-
-    # npGabor.read_wav('../input/Export1/Strat_a_mittel.wav')
-    # npGabor.specgram(x_lim=20)
-    #
-    # npGabor.read_wav('../input/Export1/Tele_a_oben.wav')
-    # npGabor.specgram(x_lim=20)
-    #
-    # npGabor.read_wav('../input/Export1/Strat_a_oben.wav')
-    # npGabor.specgram(x_lim=20)
-    #
-    # npGabor.read_wav('../input/Export1/Tele_a_unten.wav')
-    # npGabor.specgram(x_lim=20)
-    #
-    # fourier.process('../input/Export1/Tele_a_oben.wav')
-    #
-    # fourier.process('../input/Export1/Strat_a_oben.wav')
-    #
-    # fourier.process('../input/Export1/Tele_a_unten.wav')
-    #
-    # npGabor.read_wav('../input/hbd.wav')
-    # npGabor.specgram()
-    # npGabor.specgram(y_lim=550, x_lim=24)
-
-    # own_own_gabor = OwnGabor(own_fourier=True)
-    # own_gabor = OwnGabor()
-    np_gabor = NpGabor()
-    input_file = 'input/Export1/Saw_A.wav'
-
-    # np_gabor.read_wav(input_file)
-    # np_gabor.specgram()
-
-    # np_gabor.process(input_file)
-
-    # own_gabor.read_wav(input_file)
-    # spectrum, freq, t = own_gabor.transform()
-    # own_gabor.plot(spectrum, freq, t)
-    #
-    # own_own_gabor.process(input_file)
-
-    # own_fourier = OwnFourier()
-    # own_fourier.process('../input/Export1/Klavier_A_leicht.wav')
-
-    fourier.read_wav(input_file)
-    data, frequencies = fourier.transform()
-    fourier.plot(data, frequencies, x_lim=3000)
-    np_gabor.read_wav(input_file)
-    np_gabor.specgram(x_lim=5, y_lim=3000)
+    fourier.read_wav(input_wav)
+    fourier.plot_wav()
 
 
+def _run_fourier(parsed_args):
+    input_wav = parsed_args.input
+    own = parsed_args.own
+    xlim = parsed_args.xlim
+
+    if own:
+        fourier = OwnFourier()
+    else:
+        fourier = NpFourier()
+
+    fourier.read_wav(input_wav)
+    fourier_data, frequencies = fourier.transform()
+    fourier.plot(fourier_data, frequencies, x_lim=xlim)
+
+
+def _run_gabor(parsed_args):
+    input_wav = parsed_args.input
+    own = parsed_args.own
+    num_data = parsed_args.num_data
+    nfft = parsed_args.nfft
+    noverlap = parsed_args.noverlap
+    ylim = parsed_args.ylim
+
+    if own:
+        gabor = OwnGabor()
+    else:
+        gabor = NpGabor()
+
+    gabor.read_wav(input_wav)
+    spectrum, frequencies, t = gabor.transform(num_data=num_data, nfft=nfft, noverlap=noverlap)
+    gabor.plot(spectrum, frequencies, t, y_lim=ylim)
+
+
+def _run_specgram(parsed_args):
+    input_wav = parsed_args.input
+    nfft = parsed_args.nfft
+    noverlap = parsed_args.noverlap
+    xlim = parsed_args.xlim
+    ylim = parsed_args.ylim
+
+    gabor = NpGabor()
+
+    gabor.read_wav(input_wav)
+    gabor.specgram(nfft=nfft, noverlap=noverlap, x_lim=xlim, y_lim=ylim)
+
+
+def main(args: List[str]) -> int:
+    arg_parser = _set_up_arg_parser()
+    parsed_args = arg_parser.parse_args(args)
+    task = Tasks(parsed_args.command)
+
+    if task == Tasks.WAV:
+        _run_wav(parsed_args)
+    elif task == Tasks.FOURIER:
+        _run_fourier(parsed_args)
+    elif task == Tasks.GABOR:
+        _run_gabor(parsed_args)
+    elif task == Tasks.SPECGRAM:
+        _run_specgram(parsed_args)
+
+    return 0
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
