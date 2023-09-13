@@ -15,6 +15,7 @@ class Gaussian:
     """
     This class is used to compute a gaussian function.
     """
+
     def __init__(self):
         pass
 
@@ -34,6 +35,7 @@ class Gabor(SoundTransform):
     """
     This class is used to compute and plot the gabor transform of a sound file.
     """
+
     def __init__(self, own_fourier: bool = False):
         super().__init__()
         self.data = None
@@ -43,7 +45,7 @@ class Gabor(SoundTransform):
         self.frequencies = None
 
         if own_fourier:
-            self.fourier = OwnFourier()._fft
+            self.fourier = OwnFourier().fft
         else:
             self.fourier = fft
 
@@ -80,12 +82,13 @@ class OwnGabor(Gabor):
     """
     This class is used to compute and plot the gabor transform of a sound file with own methods.
     """
+
     def __int__(self, own_fourier: bool = False):
         super().__init__(own_fourier=own_fourier)
 
-    def transform(self, num_data: int = 5001, nfft: int = 10000, noverlap: int = 500) -> (List[ndarray], ndarray, ndarray):
+    def transform(self, num_data: int = 5001, nfft: int = 10000, noverlap: int = 500) -> (
+            List[ndarray], ndarray, ndarray):
         """
-        TODO: change gaussian window?
         This method computes several fourier transforms of the loaded sound file
         :param num_data: The number of data values to be averaged
         :param nfft: The number of data points used in each block for the FFT
@@ -150,7 +153,9 @@ class NpGabor(Gabor):
     """
     This class is used to compute and plot the gabor transform of a sound file with given numpy functions.
     """
-    def transform(self, num_data: int = 5001, nfft: int = 10000, noverlap: int = 500) -> (List[ndarray], ndarray, ndarray):
+
+    def transform(self, num_data: int = 5001, nfft: int = 10000, noverlap: int = 500) -> (
+            List[ndarray], ndarray, ndarray):
         """
         This method computes und plots several fourier transforms of the loaded sound file
         :param num_data: The number of data values to be averaged
@@ -158,8 +163,7 @@ class NpGabor(Gabor):
         :param noverlap: The number of points of overlap between blocks
         :return: spectrum, frequencies and time points for plotting a spectrogram
         """
-        spectrum, freqs, t, _ = plt.specgram(self.data, NFFT=nfft, Fs=self.samplerate, noverlap=noverlap,
-                                             cmap='jet_r')
+        spectrum, freqs, t, _ = plt.specgram(self.data, NFFT=nfft, Fs=self.samplerate, noverlap=noverlap, cmap='jet_r')
         return spectrum, freqs, t
 
     def plot(self, spectrum, frequencies, t, y_lim: int = 1000) -> None:

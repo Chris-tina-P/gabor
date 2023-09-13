@@ -1,5 +1,3 @@
-from abc import abstractmethod
-
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.io import wavfile
@@ -19,7 +17,6 @@ class SoundTransform:
     def read_wav(self, name: str):
         """
         This method reads in a sound file and prints the sound metadata.
-        TODO: Warning with own wav files
         :param name: The name of the sound file.
         :return: None
         """

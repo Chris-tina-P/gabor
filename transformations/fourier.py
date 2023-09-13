@@ -50,7 +50,7 @@ class OwnFourier(Fourier):
         This method computes and plots the Fourier transform of the loaded sound file with own fft.
         :return: The transformed data and the frequencies
         """
-        fourier_data = abs(self._fft(self.data))
+        fourier_data = abs(self.fft(self.data))
         frequencies = np.fft.fftfreq(len(fourier_data), d=1. / self.samplerate)
 
         # Remove negative frequencies
@@ -102,11 +102,9 @@ class OwnFourier(Fourier):
             x_even = self._recursive_fft(x[::2])
             x_odd = self._recursive_fft(x[1::2])
             factor = np.exp(-2j * np.pi * np.arange(n) / n)
-            return np.concatenate([x_even + factor[:n // 2] * x_odd,
-                                   x_even + factor[n // 2:] * x_odd])
+            return np.concatenate([x_even + factor[:n // 2] * x_odd, x_even + factor[n // 2:] * x_odd])
 
-    def _fft(self, data) -> ndarray:
-        # TODO: understand Cooley-Tukey and why frequencies are not correct
+    def fft(self, data) -> ndarray:
         """
         A recursive implementation of the 1D Cooley-Tukey FFT
         :param data: The data to transform
@@ -157,5 +155,3 @@ class NpFourier(Fourier):
         plt.ylabel("Amplitude")
         plt.plot(freq, fourier_data)
         plt.show()
-
-
