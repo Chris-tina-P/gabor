@@ -12,6 +12,15 @@ class Test(TestCase):
     # define input file
     input_file = '../input/Export1/Saw_A.wav'
 
+    def test_plot_wav(self) -> None:
+        """
+        This method tests the plot_wav method.
+        :return: None
+        """
+        own_fourier = OwnFourier()
+        own_fourier.read_wav(self.input_file)
+        own_fourier.plot_wav()
+
     def test_own_fourier(self) -> None:
         """
         This method tests the own fourier transformation.
